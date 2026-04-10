@@ -1,0 +1,1931 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beyond the Textbook: Presentation Deck</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: { 850: '#151e2e', 900: '#0f172a', 950: '#020617' },
+                        brand: { 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7' }
+                    },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(40px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; overflow: hidden; }
+
+        /* Slide Management */
+        .slide { display: none; height: 100%; width: 100%; overflow-y: auto; scroll-behavior: smooth; padding: 3rem 4rem; }
+        .slide.active { display: flex; flex-direction: column; animation: slideUp 0.5s ease-out; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 12px; height: 12px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 6px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* UI Base */
+        .glass-panel { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .narrative-flow { border-left: 8px solid #6366f1; background: linear-gradient(90deg, rgba(99,102,241,0.15) 0%, rgba(30,41,59,0) 100%); padding: 2.5rem; border-radius: 0 1.5rem 1.5rem 0;}
+        
+        /* Sliders */
+        input[type=range] { -webkit-appearance: none; background: transparent; width: 100%; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 40px; width: 40px; border-radius: 50%; background: #38bdf8; cursor: pointer; margin-top: -16px; box-shadow: 0 0 25px rgba(56, 189, 248, 0.8); border: 5px solid #0f172a; transition: transform 0.1s; }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 10px; cursor: pointer; background: #334155; border-radius: 5px; }
+        
+        /* Vertical Slider */
+        .vertical-slider { writing-mode: bt-lr; -webkit-appearance: slider-vertical; width: 10px; height: 100%; padding: 0 20px; }
+
+        /* Flowchart Nodes */
+        .flow-node { cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .flow-node:hover { transform: translateY(-8px); box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.6); border-color: #38bdf8; }
+        .flow-node.active { background-color: #1e293b; border-color: #38bdf8; box-shadow: 0 0 40px rgba(56, 189, 248, 0.4); transform: scale(1.08); z-index: 10;}
+
+        /* Mind Map Grid */
+        .mind-node { cursor: pointer; transition: all 0.3s; }
+        .mind-node:hover { filter: brightness(1.2); transform: scale(1.03); }
+        .mind-node.active { transform: scale(1.05); border-color: white; box-shadow: 0 0 30px rgba(255,255,255,0.2); }
+
+        /* Massive Horizontal Accordion */
+        .h-accordion { display: flex; width: 100%; height: 100%; min-height: 600px; gap: 1.5rem; }
+        .h-accordion-item { flex: 1; border-radius: 2rem; transition: flex 0.7s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; overflow: hidden; position: relative; border: 2px solid rgba(255,255,255,0.1); }
+        .h-accordion-item.active { flex: 7; cursor: default; border-color: rgba(255,255,255,0.3); }
+        .h-accordion-title { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap; transition: all 0.6s; font-weight: 900; font-size: 1.5rem; letter-spacing: 0.1em; }
+        .h-accordion-item.active .h-accordion-title { transform: translate(0, 0); top: 3rem; left: 4rem; font-size: 3.5rem; }
+        .h-accordion-content { opacity: 0; transition: opacity 0.5s; transition-delay: 0s; position: absolute; top: 9rem; left: 4rem; right: 4rem; bottom: 3rem; overflow-y: auto; display: none;}
+        .h-accordion-item.active .h-accordion-content { opacity: 1; transition-delay: 0.3s; display: block;}
+
+        /* Flip Cards */
+        .flip-card { perspective: 2500px; cursor: pointer; height: 100%; min-height: 500px; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 2rem; display: flex; flex-direction: column; padding: 4rem; border: 2px solid #334155; }
+        .flip-card-front { background-color: #1e293b; justify-content: center; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .flip-card-back { background-color: #0f172a; transform: rotateY(180deg); justify-content: flex-start; text-align: left; overflow-y: auto; border: 3px solid #38bdf8; box-shadow: 0 20px 50px rgba(56,189,248,0.2); }
+    </style>
+</head>
+<body class="flex h-screen w-full bg-slate-950 overflow-hidden text-slate-200 selection:bg-brand-500 selection:text-white">
+
+    <!-- Sidebar Navigation -->
+    <nav class="w-[420px] bg-slate-900 border-r border-slate-800 flex flex-col h-full shrink-0 z-20 shadow-2xl relative">
+        <div class="p-8 border-b border-slate-800 bg-slate-950">
+            <h1 class="text-3xl font-black text-white leading-tight mb-2 tracking-tight">Beyond the Textbook</h1>
+            <p class="text-lg text-brand-400 font-bold tracking-widest uppercase">Slide Deck</p>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto py-6 scroll-smooth">
+            <ul class="space-y-1 px-4" id="nav-list">
+                <!-- Dynamically populated by JS to match H2/H3 structure -->
+            </ul>
+        </div>
+
+        <div class="p-8 border-t border-slate-800 bg-slate-950">
+            <div class="flex justify-between items-center text-slate-500 text-sm font-bold">
+                <span><i class="fas fa-keyboard mr-2"></i> Use Arrow Keys</span>
+                <span>Slide <span id="nav-counter">1/31</span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-full relative bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiLz48L3N2Zz4=')]">
+        
+        <div id="slide-container" class="flex-1 overflow-hidden relative">
+            
+            <!-- Slide 1 -->
+            <section class="slide active" data-level="h1" data-title="1: Title Page">
+                <div class="w-full h-full flex flex-col justify-center items-center text-center px-12">
+                    <div class="w-48 h-48 bg-brand-500/10 rounded-full flex items-center justify-center mb-12 border-4 border-brand-500/30 shadow-[0_0_80px_rgba(14,165,233,0.3)]">
+                        <i class="fas fa-layer-group text-8xl text-brand-400"></i>
+                    </div>
+                    <h1 class="text-7xl lg:text-8xl font-black text-white leading-tight mb-8 tracking-tighter drop-shadow-2xl">
+                        Beyond the Textbook
+                    </h1>
+                    <h2 class="text-4xl text-brand-300 font-medium mb-16 max-w-6xl leading-relaxed">
+                        Generating Dynamic, Multi-Modal Content for Individualized Learning Journeys
+                    </h2>
+                    <p class="mt-8 text-xl text-slate-400 font-medium animate-pulse-slow bg-slate-900/80 px-8 py-4 rounded-full border border-slate-800 shadow-xl">
+                        Press <kbd class="px-4 py-2 bg-slate-800 rounded mx-3 font-mono text-white border border-slate-600 shadow">Right Arrow</kbd> to begin
+                    </p>
+                </div>
+            </section>
+
+            <!-- Slide 2: The Implementation Dip -->
+            <section class="slide" data-level="h2" data-title="2: The Implementation Dip" data-chart="dip">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-12">
+                        <span class="text-emerald-400 text-xl font-black tracking-widest uppercase mb-4 block">Slide 2</span>
+                        <h3 class="text-5xl font-black text-white mb-6">Overcoming the Implementation Dip</h3>
+                    </header>
+                    <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pb-12 min-h-0">
+                        <div class="lg:col-span-5 flex flex-col h-full overflow-hidden">
+                            <p class="text-lg text-slate-300 leading-relaxed mb-6 shrink-0 bg-slate-900/50 p-6 rounded-2xl border border-slate-700/50 shadow-inner">
+                                Implementing new curriculum materials is often hindered by the <strong class="text-emerald-400">"implementation dip,"</strong> a phenomenon described by <b>Michael Fullan</b> as a temporary decline in performance and confidence when encountering an innovation requiring significant shifts in skills and beliefs. This dip is not a failure of design but a predictable psychological reaction as teachers "unlearn" familiar instructional routines.
+                            </p>
+                            <div class="flex-1 overflow-y-auto pr-3 space-y-4">
+                                <h4 class="font-black text-white text-sm uppercase tracking-widest border-b border-slate-700 pb-2 mb-4 sticky top-0 bg-slate-950/90 pt-1 z-10 backdrop-blur-sm">Mitigation Strategies</h4>
+                                
+                                <div class="bg-slate-800/60 p-5 rounded-2xl border-l-4 border-emerald-500 shadow-md">
+                                    <h5 class="text-emerald-400 font-bold mb-2 text-lg">Empathy & Support</h5>
+                                    <p class="text-sm text-slate-300 mb-3"><b class="text-slate-400 uppercase tracking-wider text-xs block mb-1">Action Step</b> Acknowledge the "human toll" of change; provide a safe space for failure.</p>
+                                    <p class="text-sm text-emerald-200"><i class="fas fa-bullseye mr-2"></i> <b class="font-bold">Outcome:</b> Reduced resistance and fear of the unknown.</p>
+                                </div>
+                                
+                                <div class="bg-slate-800/60 p-5 rounded-2xl border-l-4 border-brand-500 shadow-md">
+                                    <h5 class="text-brand-400 font-bold mb-2 text-lg">Path of Small Wins</h5>
+                                    <p class="text-sm text-slate-300 mb-3"><b class="text-slate-400 uppercase tracking-wider text-xs block mb-1">Action Step</b> Break down complex shifts into manageable, immediate goals.</p>
+                                    <p class="text-sm text-brand-200"><i class="fas fa-bullseye mr-2"></i> <b class="font-bold">Outcome:</b> Increased teacher confidence and "buy-in."</p>
+                                </div>
+                                
+                                <div class="bg-slate-800/60 p-5 rounded-2xl border-l-4 border-purple-500 shadow-md">
+                                    <h5 class="text-purple-400 font-bold mb-2 text-lg">Continuous Training</h5>
+                                    <p class="text-sm text-slate-300 mb-3"><b class="text-slate-400 uppercase tracking-wider text-xs block mb-1">Action Step</b> Provide job-embedded PD and coaching rather than one-off workshops.</p>
+                                    <p class="text-sm text-purple-200"><i class="fas fa-bullseye mr-2"></i> <b class="font-bold">Outcome:</b> Long-term mastery of new instructional tools.</p>
+                                </div>
+                                
+                                <div class="bg-slate-800/60 p-5 rounded-2xl border-l-4 border-orange-500 shadow-md">
+                                    <h5 class="text-orange-400 font-bold mb-2 text-lg">Collaborative Troubleshooting</h5>
+                                    <p class="text-sm text-slate-300 mb-3"><b class="text-slate-400 uppercase tracking-wider text-xs block mb-1">Action Step</b> Schedule regular meetings for teachers to share implementation challenges.</p>
+                                    <p class="text-sm text-orange-200"><i class="fas fa-bullseye mr-2"></i> <b class="font-bold">Outcome:</b> Peer-led problem-solving and shared meaning-making.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-7 glass-panel p-12 rounded-[3rem] border border-slate-700 w-full h-full min-h-[400px] flex flex-col shadow-2xl bg-slate-900/90">
+                            <h3 class="font-bold text-center mb-6 text-xl uppercase tracking-widest text-slate-400">Performance & Confidence</h3>
+                            <div class="relative w-full flex-1">
+                                <canvas id="chart-dip"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 3: Learn More -->
+            <section class="slide" data-level="h2" data-title="3: Learn More">
+                <div class="w-full h-full flex flex-col justify-center items-center text-center px-12">
+                    <span class="text-slate-400 text-xl font-black tracking-widest uppercase mb-6 block">Slide 3</span>
+                    <h2 class="text-6xl font-black text-white mb-10">Learn More About Using Gemini and NotebookLM</h2>
+                    
+                    <div class="flex flex-col md:flex-row gap-6 mb-12">
+                        <a href="https://gemini.google.com/" target="_blank" class="inline-flex items-center justify-center text-2xl font-bold bg-slate-800 hover:bg-slate-700 px-8 py-4 rounded-full text-white shadow-xl transition border-2 border-slate-600">
+                            <i class="fas fa-sparkles mr-3 text-purple-400"></i> Google Gemini
+                        </a>
+                        <a href="https://notebooklm.google.com/" target="_blank" class="inline-flex items-center justify-center text-2xl font-bold bg-slate-800 hover:bg-slate-700 px-8 py-4 rounded-full text-white shadow-xl transition border-2 border-slate-600">
+                            <i class="fas fa-book mr-3 text-emerald-400"></i> NotebookLM
+                        </a>
+                    </div>
+
+                    <a href="https://tuba-solo.github.io/AILab/" target="_blank" class="inline-flex items-center justify-center text-3xl font-bold bg-brand-600 hover:bg-brand-500 px-10 py-6 rounded-full text-white shadow-2xl transition mb-12 border-4 border-brand-400">
+                        <i class="fas fa-arrow-right mr-4"></i> Learn More
+                    </a>
+
+                    <p class="text-xl text-slate-400 font-medium max-w-2xl">
+                        Use this resource to build your capacity in mastering Gemini for structural drafting and NotebookLM for grounded curation and alignment.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Slide 4 -->
+            <section class="slide" data-level="h2" data-title="4: Intro & Thematic Framework">
+                <div class="w-full h-full flex flex-col justify-center max-w-[1600px] mx-auto">
+                    <span class="text-brand-400 text-2xl font-black tracking-widest uppercase mb-6 block">Slide 4</span>
+                    <h2 class="text-6xl font-black text-white mb-10">Introduction and Thematic Framework</h2>
+                    
+                    <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <div class="flex flex-col h-full justify-center">
+                            <ul class="space-y-6 text-2xl text-slate-300 leading-relaxed mb-10">
+                                <li><b class="text-white">Alberta's new Grades 7-9 curriculum</b> currently lacks formally approved learning resources.</li>
+                                <li>This gap offers an opportunity: leverage Generative AI to design dynamic, localized materials instead of waiting for textbooks.</li>
+                                <li>Educational systems must transition from passive consumers to active architects of their curriculum.</li>
+                            </ul>
+                            <div class="glass-panel p-8 border-l-8 border-emerald-500 rounded-r-2xl">
+                                <p class="text-xl text-white leading-relaxed">AI isn't the author. The Teacher-AI Collaboration (TAC) paradigm allows educators to securely curate aligned, accessible, and diverse resources.</p>
+                            </div>
+                        </div>
+                        <div class="glass-panel p-12 rounded-[2rem] w-full flex flex-col justify-center items-center shadow-2xl relative bg-slate-900/80 border border-slate-700">
+                            <h4 class="text-2xl font-bold text-white mb-8 uppercase tracking-widest text-center">The Paradigm Shift</h4>
+                            <div class="flex flex-col gap-6 w-full max-w-md">
+                                <div class="bg-slate-800/50 p-6 rounded-2xl border-l-4 border-slate-500 flex items-center gap-6 opacity-60">
+                                    <i class="fas fa-book-open text-4xl text-slate-500"></i>
+                                    <div>
+                                        <h5 class="text-xl font-bold text-slate-300">Passive Consumption</h5>
+                                        <p class="text-slate-400 text-sm mt-1">Waiting for static, pre-packaged textbooks</p>
+                                    </div>
+                                </div>
+                                <div class="flex justify-center text-slate-600">
+                                    <i class="fas fa-arrow-down text-3xl"></i>
+                                </div>
+                                <div class="bg-brand-900/30 p-6 rounded-2xl border-l-4 border-brand-500 flex items-center gap-6 shadow-[0_0_30px_rgba(14,165,233,0.2)]">
+                                    <i class="fas fa-pencil-ruler text-4xl text-brand-400"></i>
+                                    <div>
+                                        <h5 class="text-xl font-bold text-brand-300">Active Architecture</h5>
+                                        <p class="text-brand-100 text-sm mt-1">Leveraging Gen AI (TAC Paradigm) to co-design materials</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 5 -->
+            <section class="slide" data-level="h3" data-title="5: Paradigms of Gen AI Collab">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-12">
+                        <span class="text-purple-400 text-xl font-black tracking-widest uppercase mb-4 block">Slide 5</span>
+                        <h3 class="text-5xl font-black text-white mb-6">Paradigms of Generative AI Collaboration</h3>
+                    </header>
+                    <div class="flex-1 flex flex-col justify-center w-full">
+                        <div class="w-full mb-12 relative px-12">
+                            <div class="flex justify-between text-xl font-black text-slate-500 mb-6 px-4 uppercase tracking-widest">
+                                <span>1. Passive Delivery</span>
+                                <span>2. Context-Blind Oracle</span>
+                                <span class="text-brand-400">3. Co-Designer</span>
+                            </div>
+                            <div class="relative w-full">
+                                <input type="range" min="1" max="3" value="1" id="paradigm-slider" class="w-full relative z-10" oninput="updateParadigmSlider()">
+                                <div class="absolute top-1/2 left-0 w-full -translate-y-1/2 flex justify-between px-[20px] pointer-events-none z-0">
+                                    <div class="h-4 w-1.5 bg-slate-600 rounded-full"></div>
+                                    <div class="h-4 w-1.5 bg-slate-600 rounded-full"></div>
+                                    <div class="h-4 w-1.5 bg-slate-600 rounded-full"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="paradigm-content" class="glass-panel p-16 rounded-[2rem] w-full min-h-[400px] flex items-center transition-all duration-500 shadow-2xl">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 6 -->
+            <section class="slide" data-level="h3" data-title="6: Context-Blind Co-Designer">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-12">
+                        <span class="text-amber-400 text-xl font-black tracking-widest uppercase mb-4 block">Slide 6</span>
+                        <h3 class="text-5xl font-black text-white mb-6">Shifting the Mindset: The Context-Blind Co-Designer</h3>
+                    </header>
+                    <div class="flex-1 flex gap-12 items-stretch">
+                        <div class="flex-1 glass-panel rounded-3xl border-2 border-slate-700 p-12 flex flex-col bg-slate-900/80 justify-center">
+                            <i class="fas fa-eye-slash text-7xl text-amber-500 mb-8"></i>
+                            <ul class="space-y-6 text-2xl text-slate-300 leading-relaxed">
+                                <li>AI systems <b>don't genuinely understand</b> the real world, classroom nuances, or individual learning styles.</li>
+                                <li>They simply recognize and replicate training data patterns.</li>
+                                <li>Without context, AI cannot connect pattern replication to pedagogical intent.</li>
+                            </ul>
+                        </div>
+                        <div class="flex flex-col justify-center items-center px-4">
+                            <i class="fas fa-arrow-right text-6xl text-slate-600"></i>
+                        </div>
+                        <div class="flex-1 glass-panel rounded-3xl border-4 border-brand-500/50 bg-brand-900/10 p-12 flex flex-col shadow-[0_0_60px_rgba(14,165,233,0.15)] justify-center">
+                            <h4 class="text-3xl font-black text-white mb-6"><i class="fas fa-key text-brand-400 mr-4"></i> The Single Most Important Factor:</h4>
+                            <p class="text-3xl text-brand-100 leading-relaxed">
+                                Systematically providing context is essential to achieving your instructional goals.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 7 -->
+            <section class="slide" data-level="h3" data-title="7: Context as Cognitive Scaffold">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-12">
+                        <span class="text-emerald-400 text-xl font-black tracking-widest uppercase mb-4 block">Slide 7</span>
+                        <h3 class="text-5xl font-black text-white mb-6">Context as a Cognitive Scaffold</h3>
+                    </header>
+                    <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-20 w-full items-center pb-12">
+                        <div class="glass-panel p-16 rounded-[3rem] border-2 border-slate-700 h-full flex flex-col justify-center bg-slate-900/50 shadow-2xl">
+                            <div class="flex flex-col gap-8 flex-1">
+                                <div class="flow-node active bg-rose-900/40 border-4 border-rose-500 rounded-3xl p-10 text-center h-1/2 flex flex-col justify-center shadow-xl" onclick="updateScaffold('vague', this)">
+                                    <h5 class="text-4xl font-black text-rose-400 mb-4">Vague Instructions</h5>
+                                </div>
+                                <div class="flow-node bg-emerald-900/40 border-4 border-emerald-500 rounded-3xl p-10 text-center h-1/2 flex flex-col justify-center shadow-xl" onclick="updateScaffold('context', this)">
+                                    <h5 class="text-4xl font-black text-emerald-400 mb-4">Systemic Context</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="scaffold-display" class="glass-panel p-16 rounded-[3rem] border-l-[16px] border-rose-500 h-full flex flex-col justify-center shadow-2xl bg-slate-900/90 transition-all duration-300">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 8 -->
+            <section class="slide" data-level="h3" data-title="8: Defining Instructional Reality">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-12">
+                        <span class="text-cyan-400 text-xl font-black tracking-widest uppercase mb-4 block">Slide 8</span>
+                        <h3 class="text-5xl font-black text-white mb-6">Systematically Defining the Instructional Reality</h3>
+                        <p class="text-xl text-slate-400">To achieve high-quality results, educators must proactively construct the complete instructional reality for the AI.</p>
+                    </header>
+                    <div class="flex-1 flex gap-16 w-full items-stretch pb-12">
+                        <div class="w-1/3 flex flex-col h-full bg-slate-900 rounded-[2.5rem] border-2 border-slate-700 overflow-hidden shadow-2xl">
+                            <button class="flex-1 p-8 text-left border-b-2 border-slate-800 transition flex items-center bg-cyan-900/30 group" id="real-btn-1" onclick="updateReality(1)">
+                                <span class="text-2xl font-black text-white">1. The Specific Audience</span>
+                            </button>
+                            <button class="flex-1 p-8 text-left border-b-2 border-slate-800 transition flex items-center hover:bg-slate-800 group" id="real-btn-2" onclick="updateReality(2)">
+                                <span class="text-2xl font-black text-slate-400">2. The Foundation</span>
+                            </button>
+                            <button class="flex-1 p-8 text-left transition flex items-center hover:bg-slate-800 group" id="real-btn-3" onclick="updateReality(3)">
+                                <span class="text-2xl font-black text-slate-400">3. Parameters of Success</span>
+                            </button>
+                        </div>
+                        <div class="w-2/3 h-full">
+                            <div id="reality-display" class="glass-panel h-full rounded-[2.5rem] p-16 border-t-[16px] border-cyan-500 flex flex-col justify-center shadow-2xl bg-slate-900/95 transition-all duration-300">
+                                <!-- Injected via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 9 -->
+            <section class="slide" data-level="h3" data-title="9: Grounding the AI">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-12">
+                        <span class="text-pink-400 text-xl font-black tracking-widest uppercase mb-4 block">Slide 9</span>
+                        <h3 class="text-5xl font-black text-white mb-6">Grounding the AI with Tangible References</h3>
+                        <p class="text-2xl text-slate-400">AI models default to dominant cultural biases or overused examples found in broad internet data.</p>
+                    </header>
+                    <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8 w-full pb-12">
+                        <div class="glass-panel p-16 rounded-[2.5rem] border-l-[12px] border-l-pink-500 shadow-2xl flex flex-col justify-center row-span-2 relative overflow-hidden group">
+                            <div class="absolute -right-10 -bottom-10 opacity-10 group-hover:opacity-20 transition-opacity duration-700">
+                                <i class="fas fa-file-alt text-[300px] text-pink-400"></i>
+                            </div>
+                            <div class="relative z-10">
+                                <h4 class="font-black text-white text-5xl mb-8">Provide Trusted Materials</h4>
+                                <p class="text-2xl text-slate-300 leading-relaxed mb-8">Feed the AI your specific grading rubrics, reading passages, or local curriculum standards.</p>
+                                <div class="bg-pink-900/20 p-6 rounded-2xl border border-pink-500/30">
+                                    <p class="text-pink-200 text-lg"><strong>Why it matters:</strong> This acts as the architectural blueprint, ensuring the AI operates strictly within the parameters you set.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-panel p-12 rounded-[2.5rem] border-l-[8px] border-l-pink-400 shadow-xl flex flex-col justify-center">
+                            <h4 class="font-black text-white text-3xl mb-4 flex items-center"><i class="fas fa-lock text-4xl text-pink-400 mr-6"></i> Closed Framework</h4>
+                            <p class="text-xl text-slate-300 leading-relaxed">Use these references to create a "closed" localized framework for the AI to operate within, effectively preventing hallucinations.</p>
+                        </div>
+                        <div class="glass-panel p-12 rounded-[2.5rem] border-l-[8px] border-l-pink-300 shadow-xl flex flex-col justify-center">
+                            <h4 class="font-black text-white text-3xl mb-4 flex items-center"><i class="fas fa-star text-4xl text-pink-400 mr-6"></i> Provide "Exemplars"</h4>
+                            <p class="text-xl text-slate-300 leading-relaxed">Giving clear examples of what "good" looks like for your classroom dramatically increases the likelihood of success on the first try.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 10 -->
+            <section class="slide" data-level="h2" data-title="10: The TAC Paradigm">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-12">
+                        <span class="text-brand-400 text-xl font-black tracking-widest uppercase mb-4 block">Slide 10</span>
+                        <h3 class="text-5xl font-black text-white mb-6">The Teacher-AI Collaboration (TAC) Paradigm</h3>
+                    </header>
+                    <div class="flex-1 flex gap-8 w-full items-stretch pb-12">
+                        <div class="flex-1 glass-panel p-12 rounded-[3rem] border-t-[8px] border-slate-500 bg-slate-900/80 shadow-xl flex flex-col items-center text-center">
+                            <div class="w-24 h-24 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center mb-8 shadow-inner">
+                                <i class="fas fa-robot text-5xl text-slate-400"></i>
+                            </div>
+                            <h4 class="text-3xl font-black text-white mb-4">The AI: Thought Partner</h4>
+                            <p class="text-xl text-slate-300 leading-relaxed">Acts as a highly capable co-designer, accelerating creation and filling the void left by traditional publishers.</p>
+                        </div>
+                        
+                        <div class="flex-1 glass-panel p-12 rounded-[3rem] border-t-[8px] border-brand-500 bg-brand-900/10 shadow-[0_0_50px_rgba(14,165,233,0.15)] flex flex-col items-center text-center transform scale-105 z-10">
+                            <div class="w-24 h-24 rounded-full bg-brand-900/50 border-2 border-brand-500 flex items-center justify-center mb-8 shadow-inner">
+                                <i class="fas fa-handshake text-5xl text-brand-400"></i>
+                            </div>
+                            <h4 class="text-3xl font-black text-white mb-4">The TAC Model</h4>
+                            <p class="text-xl text-brand-100 leading-relaxed">This central partnership avoids "pedagogical flattening" by ensuring human judgment anchors the entire design process.</p>
+                        </div>
+
+                        <div class="flex-1 glass-panel p-12 rounded-[3rem] border-t-[8px] border-emerald-500 bg-emerald-900/10 shadow-xl flex flex-col items-center text-center">
+                            <div class="w-24 h-24 rounded-full bg-emerald-900/50 border-2 border-emerald-500 flex items-center justify-center mb-8 shadow-inner">
+                                <i class="fas fa-user-tie text-5xl text-emerald-400"></i>
+                            </div>
+                            <h4 class="text-3xl font-black text-white mb-4">The Educator: Creative Director</h4>
+                            <p class="text-xl text-emerald-200 leading-relaxed">Remains strictly in the loop, providing essential pedagogical validation, cultural mediation, and instructional context.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 11 -->
+            <section class="slide" data-level="h3" data-title="11: Iterative Collaboration">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-12">
+                        <span class="text-orange-400 text-xl font-black tracking-widest uppercase mb-4 block">Slide 11</span>
+                        <h3 class="text-5xl font-black text-white mb-6">The Mindset of Iterative Collaboration</h3>
+                        <p class="text-2xl text-slate-400">Providing context is not a single, transactional command; it is an ongoing, iterative dialogue.</p>
+                    </header>
+                    <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-10 items-stretch pb-12 w-full">
+                        <div class="glass-panel p-12 rounded-[3rem] border-l-[12px] border-slate-500 shadow-2xl flex flex-col bg-slate-900/80 justify-center">
+                            <i class="fas fa-file-import text-7xl text-slate-400 mb-8"></i>
+                            <h4 class="text-3xl font-black text-white mb-4">1. The First Draft</h4>
+                            <p class="text-xl text-slate-300 leading-relaxed">Treat the AI's initial output strictly as a "first draft." It must be critically evaluated against your professional pedagogical expertise and curricular standards.</p>
+                        </div>
+                        
+                        <div class="flex flex-col items-center justify-center">
+                            <i class="fas fa-sync-alt text-8xl text-orange-400 animate-spin-slow drop-shadow-[0_0_30px_rgba(249,115,22,0.4)]"></i>
+                            <div class="mt-8 bg-orange-900/30 border border-orange-500 px-8 py-4 rounded-full shadow-lg text-center">
+                                <p class="text-orange-100 font-bold text-xl">The Iterative Dialogue</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel p-12 rounded-[3rem] border-r-[12px] border-orange-500 shadow-2xl flex flex-col bg-orange-900/10 justify-center">
+                            <i class="fas fa-sliders-h text-7xl text-orange-400 mb-8"></i>
+                            <h4 class="text-3xl font-black text-white mb-4">2. Continuous Refinement</h4>
+                            <p class="text-xl text-slate-300 leading-relaxed mb-6">Systematically feed back new context or corrective instructions to actively steer the tool toward alignment.</p>
+                            <div class="bg-black/40 p-6 rounded-2xl border border-orange-500/30">
+                                <p class="text-orange-200 text-lg font-medium">Leverage efficiency without sacrificing instructional rigor or the human element.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 12 -->
+            <section class="slide" data-level="h3" data-title="12: The Efficiency Dividend" data-chart="efficiency">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-12">
+                        <span class="text-brand-400 text-xl font-black tracking-widest uppercase mb-4 block">Slide 12</span>
+                        <h3 class="text-5xl font-black text-white mb-6">The Efficiency Dividend</h3>
+                    </header>
+                    <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-16 pb-12 items-center">
+                        <div class="flex flex-col justify-center">
+                            <ul class="space-y-6 text-2xl text-slate-300 leading-relaxed mb-10">
+                                <li>Executing workflows strictly through the TAC paradigm provides a substantial "efficiency dividend" for educators tasked with creating new curriculum materials from scratch.</li>
+                                <li>Systemic AI integration can <b>decrease preparatory tasks by 10-20%</b>, recovering critical hours per week.</li>
+                            </ul>
+                            <div class="glass-panel border-l-8 border-brand-500 p-8 rounded-r-2xl shadow-inner mb-8">
+                                <p class="text-xl text-white font-medium leading-relaxed">
+                                    This reclaimed time allows a profound shift from clerical drafting toward direct student coaching, responsive design, and real-time differentiation.
+                                </p>
+                            </div>
+                            <div class="text-sm text-slate-400 italic">
+                                Source: Carnegie Learning. (2025). The state of AI in education 2025: Key findings from a national survey. <a href="https://discover.carnegielearning.com/hubfs/PDFs/Whitepaper%20and%20Guide%20PDFs/2025-AI-in-Ed-Report.pdf" class="text-brand-400 hover:text-brand-300 underline" target="_blank">Link</a>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-panel p-12 rounded-[3rem] flex flex-col shadow-2xl bg-slate-900 border border-slate-700 relative w-full h-full justify-center">
+                            <div class="relative w-full flex-1 min-h-[400px]">
+                                <canvas id="chart-efficiency"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 13 -->
+            <section class="slide" data-level="h3" data-title="13: The 4P Prompting Cycle">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-12">
+                        <span class="text-cyan-400 text-xl font-black tracking-widest uppercase mb-4 block">Slide 13</span>
+                        <h3 class="text-5xl font-black text-white mb-6">The 4P Prompting Cycle: Prepare, Prime, Partner, Polish</h3>
+                    </header>
+                    <div class="flex-1 flex flex-col w-full pb-12">
+                        <div class="flex justify-between items-center w-full mb-12 relative px-12 shrink-0">
+                            <div class="absolute top-1/2 left-[10%] right-[10%] h-3 bg-slate-800 -translate-y-1/2 z-0 rounded-full"></div>
+                            <button onclick="setFourPStep(1)" id="fp-step-1" class="stepper-btn-4p active relative z-10 w-24 h-24 rounded-full font-black text-4xl transition border-[5px] border-slate-900 bg-cyan-600 text-white scale-110 shadow-[0_0_20px_rgba(8,145,178,0.5)]">1</button>
+                            <button onclick="setFourPStep(2)" id="fp-step-2" class="stepper-btn-4p relative z-10 w-24 h-24 rounded-full font-black text-4xl transition bg-slate-800 text-slate-500 border-[5px] border-slate-900 hover:bg-slate-700">2</button>
+                            <button onclick="setFourPStep(3)" id="fp-step-3" class="stepper-btn-4p relative z-10 w-24 h-24 rounded-full font-black text-4xl transition bg-slate-800 text-slate-500 border-[5px] border-slate-900 hover:bg-slate-700">3</button>
+                            <button onclick="setFourPStep(4)" id="fp-step-4" class="stepper-btn-4p relative z-10 w-24 h-24 rounded-full font-black text-4xl transition bg-slate-800 text-slate-500 border-[5px] border-slate-900 hover:bg-slate-700">4</button>
+                        </div>
+                        <div id="fourp-display" class="glass-panel p-16 rounded-[3rem] border-2 border-slate-700 flex-1 flex flex-col shadow-2xl bg-slate-900/95 transition-all duration-300 min-h-0">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 14 -->
+            <section class="slide" data-level="h3" data-title="14: Evaluating Prompt Quality">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-8">
+                        <span class="text-cyan-400 text-xl font-black tracking-widest uppercase mb-2 block">Slide 14</span>
+                        <h3 class="text-5xl font-black text-white mb-4">Evaluating Prompt Quality</h3>
+                    </header>
+                    <div class="flex-1 flex flex-col w-full pb-8">
+                        <div class="flex justify-between items-center w-full mb-8 relative px-12 shrink-0">
+                            <div class="absolute top-1/2 left-[10%] right-[10%] h-2 bg-slate-800 -translate-y-1/2 z-0 rounded-full"></div>
+                            <button onclick="setPromptStep(1)" id="step-1" class="stepper-btn active relative z-10 w-20 h-20 rounded-full font-black text-3xl transition border-[4px] border-slate-900 text-white scale-110 bg-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.5)]">1</button>
+                            <button onclick="setPromptStep(2)" id="step-2" class="stepper-btn relative z-10 w-20 h-20 rounded-full font-black text-3xl transition border-[4px] border-slate-900 bg-slate-800 text-slate-500 hover:bg-slate-700">2</button>
+                            <button onclick="setPromptStep(3)" id="step-3" class="stepper-btn relative z-10 w-20 h-20 rounded-full font-black text-3xl transition border-[4px] border-slate-900 bg-slate-800 text-slate-500 hover:bg-slate-700">3</button>
+                            <button onclick="setPromptStep(4)" id="step-4" class="stepper-btn relative z-10 w-20 h-20 rounded-full font-black text-3xl transition border-[4px] border-slate-900 bg-slate-800 text-slate-500 hover:bg-slate-700">4</button>
+                            <button onclick="setPromptStep(5)" id="step-5" class="stepper-btn relative z-10 w-20 h-20 rounded-full font-black text-3xl transition border-[4px] border-slate-900 bg-slate-800 text-slate-500 hover:bg-slate-700">5</button>
+                        </div>
+                        <div id="prompt-display" class="glass-panel p-10 rounded-[2.5rem] border-2 border-slate-700 flex-1 flex flex-col shadow-2xl bg-slate-900/95 transition-all duration-300 min-h-0">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 15 -->
+            <section class="slide" data-level="h2" data-title="15: Overcoming AI Defaults">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-12">
+                        <span class="text-orange-400 text-xl font-black tracking-widest uppercase mb-4 block">Slide 15</span>
+                        <h2 class="text-5xl font-black text-white mb-6">The Power of Context – Overcoming AI Defaults</h2>
+                        <p class="text-xl text-slate-400">To build high-quality, equitable resources, educators must explicitly construct instructional context.</p>
+                    </header>
+                    <div class="flex-1 w-full mx-auto pb-12">
+                        <div class="h-accordion shadow-2xl">
+                            <div class="h-accordion-item active bg-gradient-to-br from-indigo-900 to-slate-950" onclick="activateAccordion(this)">
+                                <div class="h-accordion-title text-indigo-300">Alignment</div>
+                                <div class="h-accordion-content p-12">
+                                    <h3 class="text-5xl font-black text-white mb-8">Context for Curricular Alignment</h3>
+                                    <p class="text-2xl text-slate-200 leading-relaxed">AI operates without inherent knowledge of local curricula or cognitive rigor. Anchor the AI to specific academic standards and grade-level expectations to prevent it from defaulting to generic, lower-level content.</p>
+                                </div>
+                            </div>
+                            <div class="h-accordion-item bg-gradient-to-br from-emerald-900 to-slate-950" onclick="activateAccordion(this)">
+                                <div class="h-accordion-title text-emerald-300">Equity</div>
+                                <div class="h-accordion-content p-12">
+                                    <h3 class="text-5xl font-black text-white mb-8">Context for Equity (UDL & DI)</h3>
+                                    <p class="text-2xl text-slate-200 leading-relaxed">Context transforms rigid curricula into accessible experiences. Define student developmental stages and language proficiencies to guide AI in dismantling learning barriers and creating multiple means of representation.</p>
+                                </div>
+                            </div>
+                            <div class="h-accordion-item bg-gradient-to-br from-rose-900 to-slate-950" onclick="activateAccordion(this)">
+                                <div class="h-accordion-title text-rose-300">CRP</div>
+                                <div class="h-accordion-content p-12">
+                                    <h3 class="text-5xl font-black text-white mb-8">Context for Culturally Responsive Pedagogy</h3>
+                                    <p class="text-2xl text-slate-200 leading-relaxed">Internet-scale datasets often marginalize diverse voices. Actively counteract algorithmic bias by injecting diverse multicultural perspectives and localized community references to ensure materials resonate with students' lived experiences.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 16 -->
+            <section class="slide" data-level="h2" data-title="16: Architecture of Curricular Alignment">
+                <div class="w-full h-full flex flex-col justify-center max-w-[1600px] mx-auto">
+                    <span class="text-brand-400 text-2xl font-black tracking-widest uppercase mb-6 block">Slide 16</span>
+                    <h2 class="text-7xl font-black text-white mb-10">The Architecture of Curricular Alignment</h2>
+                    <div class="narrative-flow max-w-6xl text-2xl text-slate-300 leading-relaxed space-y-6">
+                        <p>AI often excels at the content of curriculum, but often struggles with the intent of curriculum. It is important to contextualize both the "what" and the "how" of curriculum.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 17 -->
+            <section class="slide" data-level="h3" data-title="17: The Three Lenses of Curriculum">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-10">
+                        <span class="text-emerald-400 text-xl font-black tracking-widest uppercase mb-4 block">Slide 17</span>
+                        <h3 class="text-5xl font-black text-white mb-6">The Three Lenses of Curriculum</h3>
+                        <div class="bg-emerald-900/20 border-l-4 border-emerald-500 p-5 rounded-r-xl mb-4 max-w-5xl">
+                            <p class="text-xl text-emerald-100 leading-relaxed"><strong class="text-emerald-400">The Necessity of Full Alignment:</strong> Curricular alignment requires synchronization across all three lenses; AI-built resources must account not only for the formal content of the intended curriculum, but also for how it is enacted in instruction and ultimately experienced and attained by students.</p>
+                        </div>
+                    </header>
+                    <div class="flex-1 flex flex-col">
+                        <div class="flex justify-between items-center w-full max-w-5xl mx-auto mb-10 relative">
+                            <div class="absolute top-1/2 left-[10%] right-[10%] h-4 bg-slate-800 -translate-y-1/2 z-0 rounded-full"></div>
+                            
+                            <div class="flow-node active glass-panel w-56 h-56 rounded-full flex flex-col items-center justify-center relative z-10 border-8 border-slate-900 shadow-2xl" onclick="updateCurriculumFlow('intended', this)">
+                                <i class="fas fa-file-contract text-5xl text-brand-400 mb-4"></i>
+                                <span class="font-black text-xl text-white">Intended</span>
+                            </div>
+                            <div class="flow-node glass-panel w-56 h-56 rounded-full flex flex-col items-center justify-center relative z-10 border-8 border-slate-900 shadow-2xl" onclick="updateCurriculumFlow('enacted', this)">
+                                <i class="fas fa-chalkboard-teacher text-5xl text-purple-400 mb-4"></i>
+                                <span class="font-black text-xl text-white">Enacted</span>
+                            </div>
+                            <div class="flow-node glass-panel w-56 h-56 rounded-full flex flex-col items-center justify-center relative z-10 border-8 border-slate-900 shadow-2xl" onclick="updateCurriculumFlow('attained', this)">
+                                <i class="fas fa-user-graduate text-5xl text-emerald-400 mb-4"></i>
+                                <span class="font-black text-xl text-white">Attained</span>
+                            </div>
+                        </div>
+                        <div id="curriculum-flow-content" class="glass-panel p-16 rounded-[2rem] w-full min-h-[250px] flex flex-col justify-center border-l-[16px] border-brand-500 shadow-2xl bg-slate-900/90">
+                            <h4 class="text-4xl font-black text-white mb-6">The Intended Curriculum</h4>
+                            <p class="text-2xl text-slate-300 leading-relaxed">The formal goals, standards, and frameworks established by governing bodies and departments of education.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 18 -->
+            <section class="slide" data-level="h3" data-title="18: The Alignment Illusion">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-6">
+                        <span class="text-amber-500 text-xl font-black tracking-widest uppercase mb-2 block">Slide 18</span>
+                        <h3 class="text-4xl font-black text-white mb-4">The Alignment Illusion</h3>
+                    </header>
+                    <div class="flex-1 flex flex-col gap-6 w-full mx-auto overflow-hidden">
+                        <div class="key-term p-6 border-l-[12px] border-amber-500 bg-amber-900/10 shadow-xl rounded-r-2xl text-lg text-slate-300 shrink-0 flex gap-6 items-center">
+                            <div class="w-16 h-16 rounded-full bg-amber-900/50 flex items-center justify-center border border-amber-500 shrink-0">
+                                <i class="fas fa-magic text-2xl text-amber-400"></i>
+                            </div>
+                            <p>The dangerous assumption that a perfect, 1-to-1 transfer occurs automatically. When educators use generative AI unguided, it defaults to low-level cognitive tasks giving an "illusion of complexity." To bridge this gap, educators must act as "creative directors" applying rigorous prompt engineering.</p>
+                        </div>
+                        
+                        <div class="flex-1 overflow-y-auto pr-4 space-y-8 pb-8">
+                            <!-- Example 1 -->
+                            <div class="glass-panel p-6 rounded-2xl border-l-8 border-brand-500 bg-slate-900/80 flex flex-col shrink-0 shadow-xl">
+                                <h4 class="text-2xl font-bold text-white mb-4 flex justify-between items-center">
+                                    <span><i class="fas fa-microscope text-brand-400 mr-2"></i> Grade 6 Science</span>
+                                    <span class="text-xs font-bold text-slate-400 tracking-widest uppercase bg-slate-950 px-3 py-1 rounded-full border border-slate-700"><i class="fas fa-arrows-alt-h mr-2"></i> Slide to Compare</span>
+                                </h4>
+                                <div class="relative w-full rounded-xl overflow-hidden border border-slate-600 bg-slate-800 select-none">
+                                    <!-- Bottom Layer (Enacted) -->
+                                    <div class="p-8 flex flex-col justify-center bg-red-900/20 border-l-[6px] border-red-500/50 min-h-[160px]">
+                                        <h5 class="text-red-400 text-sm font-bold uppercase tracking-widest mb-2">Enacted (AI Illusion)</h5>
+                                        <p class="text-slate-300 text-lg pr-12">Generates a basic reading passage stating that ice floats, followed by a few multiple-choice recall questions or a fill-in-the-blank worksheet.</p>
+                                    </div>
+                                    <!-- Top Layer (Intended) -->
+                                    <div class="absolute inset-0 p-8 flex flex-col justify-center bg-slate-800 border-l-[6px] border-brand-500" id="top-layer-1" style="clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);">
+                                        <h5 class="text-brand-400 text-sm font-bold uppercase tracking-widest mb-2">Intended Curriculum</h5>
+                                        <p class="text-slate-200 text-lg pr-12">"Conduct an investigation to demonstrate that liquid water is denser than solid water. Hypothesize the effect on aquatic life if solid water were denser than liquid water."</p>
+                                    </div>
+                                    <!-- Slider Line & Thumb -->
+                                    <div class="absolute top-0 bottom-0 w-1 bg-brand-400 z-10 pointer-events-none transform -translate-x-1/2 shadow-[0_0_15px_rgba(56,189,248,0.8)]" id="divider-1" style="left: 100%;">
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-slate-900 border-2 border-brand-400 rounded-full flex items-center justify-center text-white shadow-lg">
+                                            <i class="fas fa-chevron-left text-[10px] mr-0.5"></i><i class="fas fa-chevron-right text-[10px] ml-0.5"></i>
+                                        </div>
+                                    </div>
+                                    <!-- Invisible Range Input -->
+                                    <input type="range" min="0" max="100" value="100" class="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20 m-0 p-0" oninput="updateComparisonSlider(1, this.value)">
+                                </div>
+                                <div class="mt-4 bg-amber-900/30 border border-amber-500/50 p-4 rounded-xl shrink-0 z-10">
+                                    <p class="text-amber-100 text-sm"><strong class="text-amber-400">The Gap:</strong> The AI flattened the pedagogy. It missed the performance-based rigor of having students physically "conduct an investigation" and cognitively "hypothesize" impacts. Students will never attain the intended analytical and investigative skills.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Example 2 -->
+                            <div class="glass-panel p-6 rounded-2xl border-l-8 border-purple-500 bg-slate-900/80 flex flex-col shrink-0 shadow-xl">
+                                <h4 class="text-2xl font-bold text-white mb-4 flex justify-between items-center">
+                                    <span><i class="fas fa-calculator text-purple-400 mr-2"></i> Grade 5 Mathematics</span>
+                                    <span class="text-xs font-bold text-slate-400 tracking-widest uppercase bg-slate-950 px-3 py-1 rounded-full border border-slate-700"><i class="fas fa-arrows-alt-h mr-2"></i> Slide to Compare</span>
+                                </h4>
+                                <div class="relative w-full rounded-xl overflow-hidden border border-slate-600 bg-slate-800 select-none">
+                                    <!-- Bottom Layer (Enacted) -->
+                                    <div class="p-8 flex flex-col justify-center bg-red-900/20 border-l-[6px] border-red-500/50 min-h-[160px]">
+                                        <h5 class="text-red-400 text-sm font-bold uppercase tracking-widest mb-2">Enacted (AI Illusion)</h5>
+                                        <p class="text-slate-300 text-lg pr-12">Outputs a standard drill sheet asking students to convert a list of fractions into decimals (e.g., 1/2 = 0.5).</p>
+                                    </div>
+                                    <!-- Top Layer (Intended) -->
+                                    <div class="absolute inset-0 p-8 flex flex-col justify-center bg-slate-800 border-l-[6px] border-purple-500" id="top-layer-2" style="clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);">
+                                        <h5 class="text-purple-400 text-sm font-bold uppercase tracking-widest mb-2">Intended Curriculum</h5>
+                                        <p class="text-slate-200 text-lg pr-12">"Express, symbolically, the same part-whole relationship as a ratio, fraction, decimal, and percentage."</p>
+                                    </div>
+                                    <!-- Slider Line & Thumb -->
+                                    <div class="absolute top-0 bottom-0 w-1 bg-purple-400 z-10 pointer-events-none transform -translate-x-1/2 shadow-[0_0_15px_rgba(168,85,247,0.8)]" id="divider-2" style="left: 100%;">
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-slate-900 border-2 border-purple-400 rounded-full flex items-center justify-center text-white shadow-lg">
+                                            <i class="fas fa-chevron-left text-[10px] mr-0.5"></i><i class="fas fa-chevron-right text-[10px] ml-0.5"></i>
+                                        </div>
+                                    </div>
+                                    <!-- Invisible Range Input -->
+                                    <input type="range" min="0" max="100" value="100" class="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20 m-0 p-0" oninput="updateComparisonSlider(2, this.value)">
+                                </div>
+                                <div class="mt-4 bg-amber-900/30 border border-amber-500/50 p-4 rounded-xl shrink-0 z-10">
+                                    <p class="text-amber-100 text-sm"><strong class="text-amber-400">The Gap:</strong> Defaults to "safe," standard fraction-to-decimal content. Fails to synthesize all four mathematical representations of the relationship as required. Students will not attain the deep, interconnected numerical fluency.</p>
+                                </div>
+                            </div>
+
+                            <!-- Example 3 -->
+                            <div class="glass-panel p-6 rounded-2xl border-l-8 border-emerald-500 bg-slate-900/80 flex flex-col shrink-0 shadow-xl">
+                                <h4 class="text-2xl font-bold text-white mb-4 flex justify-between items-center">
+                                    <span><i class="fas fa-book-open text-emerald-400 mr-2"></i> Grade 4 English Language Arts</span>
+                                    <span class="text-xs font-bold text-slate-400 tracking-widest uppercase bg-slate-950 px-3 py-1 rounded-full border border-slate-700"><i class="fas fa-arrows-alt-h mr-2"></i> Slide to Compare</span>
+                                </h4>
+                                <div class="relative w-full rounded-xl overflow-hidden border border-slate-600 bg-slate-800 select-none">
+                                    <!-- Bottom Layer (Enacted) -->
+                                    <div class="p-8 flex flex-col justify-center bg-red-900/20 border-l-[6px] border-red-500/50 min-h-[160px]">
+                                        <h5 class="text-red-400 text-sm font-bold uppercase tracking-widest mb-2">Enacted (AI Illusion)</h5>
+                                        <p class="text-slate-300 text-lg pr-12">Generates a short story followed by the question, "What was the main idea of this story? A, B, C, or D."</p>
+                                    </div>
+                                    <!-- Top Layer (Intended) -->
+                                    <div class="absolute inset-0 p-8 flex flex-col justify-center bg-slate-800 border-l-[6px] border-emerald-500" id="top-layer-3" style="clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);">
+                                        <h5 class="text-emerald-400 text-sm font-bold uppercase tracking-widest mb-2">Intended Curriculum</h5>
+                                        <p class="text-slate-200 text-lg pr-12">"Respond to texts by summarizing main ideas and providing supporting evidence from the texts."</p>
+                                    </div>
+                                    <!-- Slider Line & Thumb -->
+                                    <div class="absolute top-0 bottom-0 w-1 bg-emerald-400 z-10 pointer-events-none transform -translate-x-1/2 shadow-[0_0_15px_rgba(52,211,153,0.8)]" id="divider-3" style="left: 100%;">
+                                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-slate-900 border-2 border-emerald-400 rounded-full flex items-center justify-center text-white shadow-lg">
+                                            <i class="fas fa-chevron-left text-[10px] mr-0.5"></i><i class="fas fa-chevron-right text-[10px] ml-0.5"></i>
+                                        </div>
+                                    </div>
+                                    <!-- Invisible Range Input -->
+                                    <input type="range" min="0" max="100" value="100" class="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20 m-0 p-0" oninput="updateComparisonSlider(3, this.value)">
+                                </div>
+                                <div class="mt-4 bg-amber-900/30 border border-amber-500/50 p-4 rounded-xl shrink-0 z-10">
+                                    <p class="text-amber-100 text-sm"><strong class="text-amber-400">The Gap:</strong> Turns an active, text-based response skill into passive recognition. Masks the fact that students are not engaging in the strategic thinking or writing required to prove mastery of the intended outcome.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 19 -->
+            <section class="slide" data-level="h3" data-title="19: DOK Framework">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-8">
+                        <span class="text-orange-400 text-xl font-black tracking-widest uppercase mb-4 block">Slide 19</span>
+                        <h3 class="text-5xl font-black text-white mb-6">Depth of Knowledge (DOK) Framework</h3>
+                        <div class="bg-orange-900/20 border-l-[6px] border-orange-500 p-5 rounded-r-2xl shadow-lg">
+                            <p class="text-lg text-slate-200 leading-relaxed">
+                                Left to its own devices, generative AI tends to produce generic, "safe" content that defaults to lower-level cognitive tasks, such as basic factual recall. By applying the DOK framework to AI interactions, educators can explicitly define the level of cognitive rigor and complexity required for a task, ensuring that AI-generated activities challenge students beyond simple memorization.
+                            </p>
+                        </div>
+                    </header>
+                    <div class="flex-1 flex gap-12 w-full items-stretch">
+                        <div class="w-1/3 flex flex-col justify-center gap-4 py-4 relative">
+                            <div class="mind-node active bg-slate-800 border-4 border-slate-500 rounded-2xl p-4 text-center shadow-[0_0_15px_rgba(100,116,139,0.4)]" onclick="updateRealDOK('l1', this)">
+                                <h4 class="text-xl font-black text-white">Level 1</h4>
+                                <p class="text-slate-400 font-bold uppercase text-xs">Recall & Reproduction</p>
+                            </div>
+                            <div class="mind-node bg-slate-800 border-4 border-brand-500 rounded-2xl p-4 text-center shadow-[0_0_15px_rgba(14,165,233,0.3)]" onclick="updateRealDOK('l2', this)">
+                                <h4 class="text-xl font-black text-white">Level 2</h4>
+                                <p class="text-brand-300 font-bold uppercase text-xs">Skills & Concepts</p>
+                            </div>
+                            <div class="mind-node bg-slate-800 border-4 border-orange-500 rounded-2xl p-4 text-center shadow-[0_0_15px_rgba(249,115,22,0.3)]" onclick="updateRealDOK('l3', this)">
+                                <h4 class="text-xl font-black text-white">Level 3</h4>
+                                <p class="text-orange-300 font-bold uppercase text-xs">Strategic Thinking</p>
+                            </div>
+                            <div class="mind-node bg-slate-800 border-4 border-purple-500 rounded-2xl p-4 text-center shadow-[0_0_15px_rgba(168,85,247,0.3)]" onclick="updateRealDOK('l4', this)">
+                                <h4 class="text-xl font-black text-white">Level 4</h4>
+                                <p class="text-purple-300 font-bold uppercase text-xs">Extended Thinking</p>
+                            </div>
+                        </div>
+                        <div class="w-2/3 h-full pb-8">
+                            <div id="real-dok-display" class="glass-panel w-full h-full rounded-[2.5rem] p-12 border-l-[16px] border-slate-500 shadow-2xl flex flex-col transition-all duration-300 overflow-hidden">
+                                <!-- Injected via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 20 -->
+            <section class="slide" data-level="h3" data-title="20: Backward Design (UbD)">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-12">
+                        <span class="text-brand-400 text-xl font-black tracking-widest uppercase mb-4 block">Slide 20</span>
+                        <h3 class="text-5xl font-black text-white mb-6">Centering Alignment through Backward Design</h3>
+                        <p class="text-xl text-slate-400">Every attempt to create an important teaching resource with AI should attempt to contextualize the generation within UbD.</p>
+                    </header>
+                    <div class="flex-1 flex gap-16 w-full items-stretch pb-12">
+                        <div class="w-1/3 flex flex-col h-full bg-slate-900 rounded-[2.5rem] border-2 border-slate-700 overflow-hidden shadow-2xl">
+                            <button class="flex-1 p-8 text-left border-b-2 border-slate-800 bg-slate-800 transition flex items-center group" id="ubd2-btn-1" onclick="updateUBD2(1)">
+                                <span class="text-2xl font-black text-white">Stage 1: Desired Results</span>
+                            </button>
+                            <button class="flex-1 p-8 text-left border-b-2 border-slate-800 hover:bg-slate-800 transition flex items-center group" id="ubd2-btn-2" onclick="updateUBD2(2)">
+                                <span class="text-2xl font-black text-slate-400">Stage 2: Acceptable Evidence</span>
+                            </button>
+                            <button class="flex-1 p-8 text-left hover:bg-slate-800 transition flex items-center group" id="ubd2-btn-3" onclick="updateUBD2(3)">
+                                <span class="text-2xl font-black text-slate-400">Stage 3: Plan Experiences</span>
+                            </button>
+                        </div>
+                        <div class="w-2/3 h-full">
+                            <div id="ubd2-display" class="glass-panel h-full rounded-[2.5rem] p-16 border-t-[16px] border-slate-500 flex flex-col justify-center shadow-2xl bg-slate-900/95 transition-all duration-300">
+                                <h4 class="text-5xl font-black text-white mb-8">Stage 1: Identify Desired Results</h4>
+                                <p class="text-3xl text-slate-300 leading-relaxed">Educators must first prompt the AI with the specific Alberta grades 7-9 learner outcomes to establish the precise instructional destination.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 21 -->
+            <section class="slide" data-level="h2" data-title="21: Architecture of Inclusion">
+                <div class="w-full h-full flex flex-col justify-center max-w-[1600px] mx-auto">
+                    <span class="text-pink-400 text-2xl font-black tracking-widest uppercase mb-6 block">Slide 21</span>
+                    <h2 class="text-7xl font-black text-white mb-10">The Architecture of Inclusion: The Triple-Helix Framework</h2>
+                    <div class="narrative-flow max-w-6xl text-2xl text-slate-300 leading-relaxed space-y-6" style="border-color: #ec4899; background: rgba(236, 72, 153, 0.1);">
+                        <p>The resources we build today must not be designed for a hypothetical "average" student who does not exist.</p>
+                        <p>To authentically support the diverse population of Alberta classrooms, we must synthesize the "Triple-Helix" framework, embedding equity, accessibility, and cultural responsiveness directly into our AI prompts.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 22 -->
+            <section class="slide" data-level="h3" data-title="22: UDL via Multi-Modal AI">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-8">
+                        <span class="text-indigo-400 text-xl font-black tracking-widest uppercase mb-2 block">Slide 22</span>
+                        <h3 class="text-5xl font-black text-white mb-4">Universal Design for Learning (UDL) via Multi-Modal AI</h3>
+                        <p class="text-xl text-slate-400">The most effective instructional resources are "born accessible." UDL principles are embedded directly into the blueprint rather than layered on as an afterthought. According to the CAST UDL Guidelines 3.0, developers must address three specific neural networks:</p>
+                    </header>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 items-stretch">
+                        <div class="bg-black/40 p-8 rounded-3xl border-t-[6px] border-indigo-400 shadow-inner flex flex-col">
+                            <h4 class="font-black text-white text-2xl mb-2">Affective Network</h4>
+                            <p class="text-indigo-400 font-bold uppercase tracking-widest mb-4 text-xs">Engagement (The "Why")</p>
+                            <p class="text-slate-300 text-lg leading-relaxed flex-1">Resources must offer options for recruiting interest, sustaining effort, and self-regulation. This includes optimizing choice and autonomy (e.g., allowing students to choose their own research topics within a unit) and nurturing joy and play.</p>
+                        </div>
+                        <div class="bg-black/40 p-8 rounded-3xl border-t-[6px] border-indigo-500 shadow-inner flex flex-col">
+                            <h4 class="font-black text-white text-2xl mb-2">Recognition Network</h4>
+                            <p class="text-indigo-400 font-bold uppercase tracking-widest mb-4 text-xs">Representation (The "What")</p>
+                            <p class="text-slate-300 text-lg leading-relaxed flex-1">Information must be presented in multiple formats to support perception, language, and comprehension. This involves clarifying vocabulary and symbols, illustrating through multiple media, and activating prior knowledge to connect new learning.</p>
+                        </div>
+                        <div class="bg-black/40 p-8 rounded-3xl border-t-[6px] border-indigo-600 shadow-inner flex flex-col">
+                            <h4 class="font-black text-white text-2xl mb-2">Strategic Network</h4>
+                            <p class="text-indigo-400 font-bold uppercase tracking-widest mb-4 text-xs">Action & Expression (The "How")</p>
+                            <p class="text-slate-300 text-lg leading-relaxed flex-1">Resources must allow for varied methods of response and navigation. This includes providing options for physical action, expression through diverse media (text, speech, drawing), and supporting executive functions like goal-setting and progress-monitoring.</p>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-6 border-l-8 border-indigo-500 rounded-xl">
+                        <strong class="text-indigo-400 uppercase tracking-widest mb-2 block text-sm">The Blueprint Phase</strong>
+                        <p class="text-lg text-white">In the blueprint phase, developers should anticipate "learner variability" as a predictable feature of every classroom. By recognizing that barriers reside in the design of the environment rather than in the learner, developers can intentionally reduce those barriers using an iterative design process.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 23 -->
+            <section class="slide" data-level="h3" data-title="23: DI vs. Proactive Design">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-10">
+                        <span class="text-rose-400 text-xl font-black tracking-widest uppercase mb-4 block">Slide 23</span>
+                        <h3 class="text-5xl font-black text-white mb-6">Differentiated Instruction (DI) vs. Proactive Design</h3>
+                    </header>
+                    <div class="grid grid-cols-2 gap-10 h-full pb-12">
+                        <div class="bg-black/40 p-12 rounded-3xl border-2 border-slate-700 flex flex-col justify-center text-center shadow-inner">
+                            <i class="fas fa-history text-6xl text-slate-500 mb-8"></i>
+                            <h4 class="font-black text-white text-4xl mb-6">Traditional DI (Reactive)</h4>
+                            <p class="text-slate-300 text-xl leading-relaxed mb-6">Frequently a reactive strategy, forcing educators to scramble to accommodate learners after they struggle. Burdensome and stigmatizing.</p>
+                            <div class="bg-slate-900 p-6 rounded-2xl">
+                                <p class="text-slate-400 text-xl italic leading-relaxed">"Cooking one meal and scrambling to accommodate an allergic guest."</p>
+                            </div>
+                        </div>
+                        <div class="bg-rose-950/60 p-12 rounded-3xl border-4 border-rose-500 shadow-[0_0_50px_rgba(244,63,94,0.3)] flex flex-col justify-center text-center">
+                            <i class="fas fa-bolt text-6xl text-rose-400 mb-8 animate-pulse"></i>
+                            <h4 class="font-black text-white text-4xl mb-6">Gen AI (Proactive)</h4>
+                            <p class="text-rose-100 text-xl leading-relaxed mb-6">Allows educators to proactively build differentiated tiers (e.g., modified reading levels, enriched tasks) concurrently, democratizing access.</p>
+                            <div class="bg-[#0d1117] p-6 rounded-2xl border border-rose-500/50 mb-6">
+                                <p class="text-rose-200 text-xl italic leading-relaxed font-medium">"Utilizing AI to prepare a diverse buffet from the outset."</p>
+                            </div>
+                            <p class="text-white text-sm text-left border-l-4 border-rose-400 pl-4"><b>Ex:</b> Grade 9 lesson generating 3 tiered texts instantly: enriched legal analysis, standard grade-level, and 5th-grade reading level.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 24 -->
+            <section class="slide" data-level="h3" data-title="24: CRP & Diversity">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-12">
+                        <span class="text-emerald-400 text-xl font-black tracking-widest uppercase mb-4 block">Slide 24</span>
+                        <h3 class="text-5xl font-black text-white mb-6">Culturally Responsive Pedagogy (CRP) and Diversity</h3>
+                        <p class="text-xl text-slate-400">Our generated resources must explicitly validate complex student identities.</p>
+                    </header>
+                    <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-16 w-full pb-12 items-stretch">
+                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner shadow-2xl">
+                                <div class="flip-card-front bg-slate-900 border-[3px] border-emerald-500/30">
+                                    <i class="fas fa-gavel text-8xl text-emerald-500 mb-10"></i>
+                                    <h3 class="text-4xl font-black text-white mb-4">Dismantle Testimonial Injustice</h3>
+                                    <p class="text-emerald-400 mt-8 text-lg uppercase tracking-widest font-black animate-pulse">Click to flip</p>
+                                </div>
+                                <div class="flip-card-back p-12 bg-slate-900 border-emerald-500">
+                                    <h3 class="text-3xl font-black text-emerald-400 mb-6">Centering Knowledge</h3>
+                                    <p class="text-xl text-slate-200 leading-relaxed">AI outputs must be scrutinized to dismantle "Testimonial Injustice" (centering only dominant, Western methods of knowing). We must explicitly prompt AI to re-frame historical narratives.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-inner shadow-2xl">
+                                <div class="flip-card-front bg-slate-900 border-[3px] border-emerald-500/30">
+                                    <i class="fas fa-language text-8xl text-emerald-500 mb-10"></i>
+                                    <h3 class="text-4xl font-black text-white mb-4">Asset-Based Framing</h3>
+                                    <p class="text-emerald-400 mt-8 text-lg uppercase tracking-widest font-black animate-pulse">Click to flip</p>
+                                </div>
+                                <div class="flip-card-back p-12 bg-slate-900 border-emerald-500">
+                                    <h3 class="text-3xl font-black text-emerald-400 mb-6">Linguistic Wealth</h3>
+                                    <p class="text-xl text-slate-200 leading-relaxed mb-6">Utilize asset-based linguistic framing. An educator intentionally commands AI to treat a student's native language as cultural wealth rather than a deficit.</p>
+                                    <div class="bg-black/50 p-4 border-l-4 border-emerald-500 text-sm text-slate-300">
+                                        <b>Ex:</b> Generate specialized case studies that center the expertise of BIPOC communities in STEM fields.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 25 -->
+            <section class="slide" data-level="h3" data-title="25: AI for EAL Success">
+                <div class="w-full h-full flex flex-col justify-center items-center max-w-[1600px] mx-auto">
+                    <div class="glass-panel p-16 rounded-[3rem] border-4 border-brand-500 shadow-[0_0_80px_rgba(14,165,233,0.2)] max-w-4xl text-center">
+                        <span class="bg-brand-500 text-slate-900 font-black px-6 py-2 rounded-full uppercase tracking-widest text-sm mb-8 inline-block">May 7, 2026</span>
+                        <h3 class="text-5xl font-black text-white mb-8">AI for EAL Success: Practical, Ethical Strategies</h3>
+                        <p class="text-2xl text-slate-300 leading-relaxed mb-8">
+                            This introductory session shows how AI tools like Google Gemini and NotebookLM can help you quickly differentiate texts, scaffold reading and writing, and build vocabulary and oral fluency for your EAL learners.
+                        </p>
+                        <p class="text-lg text-slate-400 leading-relaxed mb-8">
+                            Grounded in research-based practices, we’ll explore how to design leveled readings, tiered activities, and low-anxiety speaking and listening tasks. We’ll foreground a “teacher-in-the-loop” approach, addressing algorithmic bias, student data privacy, and keeping professional judgment at the center.
+                        </p>
+                        <p class="text-brand-300 font-bold text-xl mb-10">
+                            Leave with ready-to-use prompts, planning workflows, and classroom examples!
+                        </p>
+                        <a href="https://eips.pl.ca.powerschool.com/ia/empari/learning2/registration/presentSectionRegistrationDetails?id=eoawc5OG2798ZBnqb4KazQ%3D%3D" target="_blank" class="inline-block bg-brand-500 hover:bg-brand-400 text-slate-900 font-black px-10 py-4 rounded-full text-xl uppercase tracking-widest transition shadow-[0_0_20px_rgba(14,165,233,0.4)]">Register</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 26: Live Demonstrations -->
+            <section class="slide" data-level="h2" data-title="26: Live Demonstrations">
+                <div class="w-full h-full flex flex-col justify-center max-w-[1600px] mx-auto">
+                    <span class="text-brand-400 text-2xl font-black tracking-widest uppercase mb-6 block">Slide 26</span>
+                    <h2 class="text-7xl font-black text-white mb-12">Live Demonstrations</h2>
+                    <div class="glass-panel p-16 rounded-[3rem] border-l-[12px] border-brand-500 shadow-2xl bg-slate-900/80 w-full max-w-5xl">
+                        <ul class="space-y-10 text-4xl text-slate-200 leading-relaxed font-medium">
+                            <li class="flex items-center"><i class="fas fa-tasks text-brand-400 mr-8 text-5xl"></i> Creating multiple choice questions</li>
+                            <li class="flex items-center"><i class="fas fa-sitemap text-brand-400 mr-8 text-5xl"></i> Building a unit plan</li>
+                            <li class="flex items-center"><i class="fas fa-book-reader text-brand-400 mr-8 text-5xl"></i> Generating a student reading</li>
+                            <li class="flex items-center"><i class="fas fa-images text-brand-400 mr-8 text-5xl"></i> Generating multi-modal content</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 27: Creating MCQs -->
+            <section class="slide" data-level="h3" data-title="27: Creating MCQs">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-6">
+                        <span class="text-brand-400 text-xl font-black tracking-widest uppercase mb-2 block">Slide 27</span>
+                        <h3 class="text-5xl font-black text-white mb-4">Creating Multiple Choice Questions</h3>
+                        <div class="bg-brand-900/20 border-l-[6px] border-brand-500 p-4 rounded-r-2xl shadow-lg flex gap-4 items-center">
+                            <i class="fas fa-tasks text-3xl text-brand-400 shrink-0 ml-2"></i>
+                            <p class="text-lg text-slate-200 leading-relaxed">
+                                <strong class="text-brand-400">Scenario: Social Studies 30 Quiz.</strong> Designing a 10-question quiz via AI reduces workload, but requires the educator to systematically build the instructional context as a co-designer to guarantee rigor and alignment.
+                            </p>
+                        </div>
+                    </header>
+                    <div class="flex-1 flex gap-8 w-full items-stretch pb-8 min-h-0">
+                        <div class="w-1/3 flex flex-col h-full bg-slate-900 rounded-[2.5rem] border-2 border-slate-700 overflow-y-auto shadow-2xl p-2 shrink-0">
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center bg-slate-800 rounded-xl" id="quiz-btn-1" onclick="updateQuizStep(1)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-brand-500 flex items-center justify-center mr-4 shrink-0 font-black text-brand-400 text-sm transition-colors">1</div>
+                                <span class="text-lg font-black text-white">Learning Goals</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center hover:bg-slate-800 rounded-xl" id="quiz-btn-2" onclick="updateQuizStep(2)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">2</div>
+                                <span class="text-lg font-black text-slate-400">DOK Desired</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center hover:bg-slate-800 rounded-xl" id="quiz-btn-3" onclick="updateQuizStep(3)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">3</div>
+                                <span class="text-lg font-black text-slate-400">Specific Sources</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center hover:bg-slate-800 rounded-xl" id="quiz-btn-4" onclick="updateQuizStep(4)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">4</div>
+                                <span class="text-lg font-black text-slate-400">Specific Prompting</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center hover:bg-slate-800 rounded-xl" id="quiz-btn-5" onclick="updateQuizStep(5)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">5</div>
+                                <span class="text-lg font-black text-slate-400">Review & Iterate</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left transition flex items-center hover:bg-slate-800 rounded-xl" id="quiz-btn-6" onclick="updateQuizStep(6)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">6</div>
+                                <span class="text-lg font-black text-slate-400">Export & Refine</span>
+                            </button>
+                        </div>
+                        <div class="w-2/3 h-full min-h-0">
+                            <div id="quiz-display" class="glass-panel h-full rounded-[2.5rem] p-12 border-t-[12px] border-brand-500 flex flex-col shadow-2xl bg-slate-900/95 transition-all duration-300 min-h-0">
+                                <!-- Injected via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 28: Building a Unit Plan -->
+            <section class="slide" data-level="h3" data-title="28: Building a Unit Plan">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-6">
+                        <span class="text-emerald-400 text-xl font-black tracking-widest uppercase mb-2 block">Slide 28</span>
+                        <h3 class="text-5xl font-black text-white mb-4">Building a Unit Plan</h3>
+                        <div class="bg-emerald-900/20 border-l-[6px] border-emerald-500 p-4 rounded-r-2xl shadow-lg flex gap-4 items-center">
+                            <i class="fas fa-sitemap text-3xl text-emerald-400 shrink-0 ml-2"></i>
+                            <p class="text-lg text-slate-200 leading-relaxed">
+                                <strong class="text-emerald-400">Scenario: Career Education & Financial Literacy 7.</strong> Designing an entire unit plan requires systematically constructing the instructional reality step-by-step to prevent the AI from generating generic, surface-level outlines.
+                            </p>
+                        </div>
+                    </header>
+                    <div class="flex-1 flex gap-8 w-full items-stretch pb-8 min-h-0">
+                        <div class="w-1/3 flex flex-col h-full bg-slate-900 rounded-[2.5rem] border-2 border-slate-700 overflow-y-auto shadow-2xl p-2 shrink-0">
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center bg-slate-800 rounded-xl" id="unit-btn-1" onclick="updateUnitStep(1)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-indigo-500 flex items-center justify-center mr-4 shrink-0 font-black text-indigo-400 text-sm transition-colors">1</div>
+                                <span class="text-lg font-black text-white">Framework</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center hover:bg-slate-800 rounded-xl" id="unit-btn-2" onclick="updateUnitStep(2)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">2</div>
+                                <span class="text-lg font-black text-slate-400">Desired Results</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center hover:bg-slate-800 rounded-xl" id="unit-btn-3" onclick="updateUnitStep(3)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">3</div>
+                                <span class="text-lg font-black text-slate-400">Align Curriculums</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center hover:bg-slate-800 rounded-xl" id="unit-btn-4" onclick="updateUnitStep(4)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">4</div>
+                                <span class="text-lg font-black text-slate-400">Evidence & Context</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center hover:bg-slate-800 rounded-xl" id="unit-btn-5" onclick="updateUnitStep(5)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">5</div>
+                                <span class="text-lg font-black text-slate-400">Experiences</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center hover:bg-slate-800 rounded-xl" id="unit-btn-6" onclick="updateUnitStep(6)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">6</div>
+                                <span class="text-lg font-black text-slate-400">Build & Iterate</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left transition flex items-center hover:bg-slate-800 rounded-xl" id="unit-btn-7" onclick="updateUnitStep(7)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">7</div>
+                                <span class="text-lg font-black text-slate-400">Export Results</span>
+                            </button>
+                        </div>
+                        <div class="w-2/3 h-full min-h-0">
+                            <div id="unit-display" class="glass-panel h-full rounded-[2.5rem] p-12 border-t-[12px] border-indigo-500 flex flex-col shadow-2xl bg-slate-900/95 transition-all duration-300 min-h-0">
+                                <!-- Injected via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 29: Generating a Student Reading -->
+            <section class="slide" data-level="h3" data-title="29: Generating a Student Reading">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-6">
+                        <span class="text-rose-400 text-xl font-black tracking-widest uppercase mb-2 block">Slide 29</span>
+                        <h3 class="text-5xl font-black text-white mb-4">Generating a Student Reading</h3>
+                        <div class="bg-rose-900/20 border-l-[6px] border-rose-500 p-4 rounded-r-2xl shadow-lg flex gap-4 items-center">
+                            <i class="fas fa-book-reader text-3xl text-rose-400 shrink-0 ml-2"></i>
+                            <p class="text-lg text-slate-200 leading-relaxed">
+                                <strong class="text-rose-400">Scenario: Social 7 on John A. MacDonald.</strong> Creating a historical reading passage requires systematically constructing the instructional reality to avoid generic, surface-level summaries that reflect dominant cultural narratives.
+                            </p>
+                        </div>
+                    </header>
+                    <div class="flex-1 flex gap-8 w-full items-stretch pb-8 min-h-0">
+                        <div class="w-1/3 flex flex-col h-full bg-slate-900 rounded-[2.5rem] border-2 border-slate-700 overflow-y-auto shadow-2xl p-2 shrink-0">
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center bg-slate-800 rounded-xl" id="reading-btn-1" onclick="updateReadingStep(1)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-brand-500 flex items-center justify-center mr-4 shrink-0 font-black text-brand-400 text-sm transition-colors">1</div>
+                                <span class="text-lg font-black text-white">Curriculum References</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center hover:bg-slate-800 rounded-xl" id="reading-btn-2" onclick="updateReadingStep(2)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">2</div>
+                                <span class="text-lg font-black text-slate-400">Reading Levels (UDL)</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center hover:bg-slate-800 rounded-xl" id="reading-btn-3" onclick="updateReadingStep(3)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">3A</div>
+                                <span class="text-lg font-black text-slate-400">Targeted Details</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center hover:bg-slate-800 rounded-xl" id="reading-btn-4" onclick="updateReadingStep(4)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">3B</div>
+                                <span class="text-lg font-black text-slate-400">CRP & Perspectives</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center hover:bg-slate-800 rounded-xl" id="reading-btn-5" onclick="updateReadingStep(5)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">4</div>
+                                <span class="text-lg font-black text-slate-400">Iterate for Accuracy</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left transition flex items-center hover:bg-slate-800 rounded-xl" id="reading-btn-6" onclick="updateReadingStep(6)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">5</div>
+                                <span class="text-lg font-black text-slate-400">Export & Refine</span>
+                            </button>
+                        </div>
+                        <div class="w-2/3 h-full min-h-0">
+                            <div id="reading-display" class="glass-panel h-full rounded-[2.5rem] p-12 border-t-[12px] border-brand-500 flex flex-col shadow-2xl bg-slate-900/95 transition-all duration-300 min-h-0">
+                                <!-- Injected via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 30: Generating Multi-Modal Content -->
+            <section class="slide" data-level="h3" data-title="30: Generating Multi-Modal Content">
+                <div class="w-full h-full flex flex-col max-w-[1600px] mx-auto">
+                    <header class="mb-6">
+                        <span class="text-cyan-400 text-xl font-black tracking-widest uppercase mb-2 block">Slide 30</span>
+                        <h3 class="text-5xl font-black text-white mb-4">Generating Multi-Modal Content</h3>
+                        <div class="bg-cyan-900/20 border-l-[6px] border-cyan-500 p-4 rounded-r-2xl shadow-lg flex gap-4 items-center">
+                            <i class="fas fa-images text-3xl text-cyan-400 shrink-0 ml-2"></i>
+                            <p class="text-lg text-slate-200 leading-relaxed">
+                                <strong class="text-cyan-400">Scenario: Social Studies 7 on John A. Macdonald.</strong> Creating multi-modal educational resources requires systematically guiding the AI to dismantle specific learning barriers, transforming a static reading into a dynamic suite of resources.
+                            </p>
+                        </div>
+                    </header>
+                    <div class="flex-1 flex gap-8 w-full items-stretch pb-8 min-h-0">
+                        <div class="w-1/3 flex flex-col h-full bg-slate-900 rounded-[2.5rem] border-2 border-slate-700 overflow-y-auto shadow-2xl p-2 shrink-0">
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center bg-slate-800 rounded-xl" id="multi-btn-1" onclick="updateMultiStep(1)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-brand-500 flex items-center justify-center mr-4 shrink-0 font-black text-brand-400 text-sm transition-colors">1</div>
+                                <span class="text-lg font-black text-white">Context & UDL</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center hover:bg-slate-800 rounded-xl" id="multi-btn-2" onclick="updateMultiStep(2)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">2</div>
+                                <span class="text-lg font-black text-slate-400">Match AI to Modality</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left border-b border-slate-800 transition flex items-center hover:bg-slate-800 rounded-xl" id="multi-btn-3" onclick="updateMultiStep(3)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">3</div>
+                                <span class="text-lg font-black text-slate-400">Iterative Fact Check</span>
+                            </button>
+                            <button class="flex-1 p-4 text-left transition flex items-center hover:bg-slate-800 rounded-xl" id="multi-btn-4" onclick="updateMultiStep(4)">
+                                <div class="w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors">4</div>
+                                <span class="text-lg font-black text-slate-400">Deploy & Accessibility</span>
+                            </button>
+                        </div>
+                        <div class="w-2/3 h-full min-h-0">
+                            <div id="multi-display" class="glass-panel h-full rounded-[2.5rem] p-12 border-t-[12px] border-cyan-500 flex flex-col shadow-2xl bg-slate-900/95 transition-all duration-300 min-h-0">
+                                <!-- Injected via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 31 -->
+            <section class="slide" data-level="h2" data-title="31: Conclusion">
+                <div class="w-full h-full flex flex-col justify-center text-center px-12 max-w-[1600px] mx-auto">
+                    <span class="text-brand-400 text-2xl font-black tracking-widest uppercase mb-6 block">Slide 31</span>
+                    <i class="fas fa-graduation-cap text-[80px] text-brand-500 mb-8 mx-auto drop-shadow-[0_0_30px_rgba(14,165,233,0.5)]"></i>
+                    <h2 class="text-6xl font-black text-white mb-8">Conclusion</h2>
+                    
+                    <p class="text-3xl text-slate-300 leading-relaxed mb-12 max-w-5xl mx-auto font-light">
+                        The real power of generative AI isn't in letting it do all the work for you. It works best when it acts as your co-designer. <strong class="text-white font-bold">To get the most out of it, you need to be a master of providing context.</strong>
+                    </p>
+                    
+                    <div class="bg-brand-900/20 border-l-[8px] border-brand-500 p-10 rounded-r-3xl shadow-2xl max-w-5xl mx-auto text-left flex items-start gap-8">
+                        <div class="w-20 h-20 rounded-full bg-brand-900/50 border-2 border-brand-500 flex items-center justify-center shrink-0 shadow-inner mt-2">
+                            <i class="fas fa-key text-3xl text-brand-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-white text-3xl mb-4">Context is the Key</h3>
+                            <p class="text-xl text-slate-300 leading-relaxed">
+                                When we build a clear picture of what we need (like specific learning goals, the depth of thinking required, and the unique needs of our students) we stop the AI from giving us boring, generic content. By working together with AI and giving it clear boundaries, we have the power to create amazing, fair, and highly engaging lessons for everyone.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <script>
+        // --- Core Navigation Logic ---
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+        const navList = document.getElementById('nav-list');
+        const navCounter = document.getElementById('nav-counter');
+        let chartInstances = { adoption: null, efficiency: null, dip: null };
+
+        function initApp() {
+            slides.forEach((slide, idx) => {
+                const title = slide.getAttribute('data-title');
+                const level = slide.getAttribute('data-level'); 
+                const li = document.createElement('li');
+                
+                if (level === 'h1' || level === 'h2') {
+                    li.className = 'mt-6 mb-2';
+                    li.innerHTML = `
+                        <button class="w-full text-left px-4 py-3 text-sm rounded-xl transition-colors flex items-center font-black text-slate-300 hover:text-white group hover:bg-slate-800 border border-transparent hover:border-slate-700" 
+                                onclick="goToSlide(${idx})">
+                            <span class="truncate">${title}</span>
+                        </button>
+                    `;
+                } else if (level === 'h3') {
+                    li.className = 'ml-6 border-l-2 border-slate-700/50 pl-3 mb-1';
+                    li.innerHTML = `
+                        <button class="w-full text-left px-3 py-2 text-xs rounded-lg transition-colors flex items-center font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 group border border-transparent hover:border-slate-700" 
+                                onclick="goToSlide(${idx})">
+                            <span class="truncate">${title}</span>
+                        </button>
+                    `;
+                }
+                if(navList) navList.appendChild(li);
+            });
+            updateUI();
+        }
+
+        function updateUI() {
+            slides.forEach((slide, idx) => {
+                if (idx === currentSlide) slide.classList.add('active');
+                else slide.classList.remove('active');
+            });
+
+            if(navList) {
+                document.querySelectorAll('#nav-list button').forEach((btn, idx) => {
+                    const isH3 = slides[idx].getAttribute('data-level') === 'h3';
+                    if (idx === currentSlide) {
+                        if(isH3) btn.className = 'w-full text-left px-3 py-2 text-xs rounded-lg transition-colors flex items-center group bg-brand-900/30 border-l-[4px] border-l-brand-500 border-t border-r border-b border-brand-500/20 text-brand-300 font-bold shadow-inner';
+                        else btn.className = 'w-full text-left px-4 py-3 text-sm rounded-xl transition-colors flex items-center group bg-brand-900/30 text-brand-300 font-black shadow-inner border border-brand-500/40';
+                        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    } else {
+                        if(isH3) btn.className = 'w-full text-left px-3 py-2 text-xs rounded-lg transition-colors flex items-center font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 group border border-transparent hover:border-slate-700';
+                        else btn.className = 'w-full text-left px-4 py-3 text-sm rounded-xl transition-colors flex items-center font-black text-slate-300 hover:text-white group hover:bg-slate-800 border border-transparent hover:border-slate-700';
+                    }
+                });
+            }
+
+            if(navCounter) navCounter.innerText = `${currentSlide + 1}/${slides.length}`;
+
+            const activeSlide = slides[currentSlide];
+            if(!activeSlide) return;
+
+            if(activeSlide.hasAttribute('data-chart')) renderChart(activeSlide.getAttribute('data-chart'));
+            
+            // Dynamically initialize interactives on the active slide to prevent blank content
+            if (activeSlide.querySelector('#paradigm-slider')) updateParadigmSlider();
+            if (activeSlide.querySelector('#scaffold-display')) {
+                const node = activeSlide.querySelector('.flow-node.active') || activeSlide.querySelector('.flow-node');
+                if(node) updateScaffold('vague', node);
+            }
+            if (activeSlide.querySelector('#reality-display')) updateReality(1);
+            if (activeSlide.querySelector('#tac-v-content')) updateTACSlider();
+            if (activeSlide.querySelector('#fourp-display')) setFourPStep(1);
+            if (activeSlide.querySelector('#prompt-display')) setPromptStep(1);
+            if (activeSlide.querySelector('#curriculum-flow-content')) {
+                const node = activeSlide.querySelector('.flow-node.active') || activeSlide.querySelector('.flow-node');
+                if(node) updateCurriculumFlow('intended', node);
+            }
+            if (activeSlide.querySelector('#real-dok-display')) {
+                const node = activeSlide.querySelector('.mind-node.active') || activeSlide.querySelector('.mind-node');
+                if(node) updateRealDOK('l1', node);
+            }
+            if (activeSlide.querySelector('#ubd2-display')) updateUBD2(1);
+            if (activeSlide.querySelector('#quiz-display')) updateQuizStep(1);
+            if (activeSlide.querySelector('#unit-display')) updateUnitStep(1);
+            if (activeSlide.querySelector('#reading-display')) updateReadingStep(1);
+            if (activeSlide.querySelector('#multi-display')) updateMultiStep(1);
+
+            // Initialize image comparison sliders to default state on slide load
+            [1,2,3].forEach(id => {
+                if (activeSlide.querySelector(`#top-layer-${id}`)) updateComparisonSlider(id, 100);
+            });
+        }
+
+        function getSlideStepsInfo(slideElement) {
+            if (slideElement.querySelector('#scaffold-display')) return { type: 'scaffold', steps: Array.from(slideElement.querySelectorAll('.flow-node')) };
+            if (slideElement.querySelector('#reality-display')) return { type: 'reality', steps: Array.from(slideElement.querySelectorAll('button[id^="real-btn-"]')) };
+            if (slideElement.querySelector('#fourp-display')) return { type: 'fourp', steps: Array.from(slideElement.querySelectorAll('button[id^="fp-step-"]')) };
+            if (slideElement.querySelector('#prompt-display')) return { type: 'prompt', steps: Array.from(slideElement.querySelectorAll('button[id^="step-"]')) };
+            if (slideElement.querySelector('.h-accordion')) return { type: 'accordion', steps: Array.from(slideElement.querySelectorAll('.h-accordion-item')) };
+            if (slideElement.querySelector('#curriculum-flow-content')) return { type: 'flow', steps: Array.from(slideElement.querySelectorAll('.flow-node')) };
+            if (slideElement.querySelector('#real-dok-display')) return { type: 'dok', steps: Array.from(slideElement.querySelectorAll('.mind-node')) };
+            if (slideElement.querySelector('#ubd2-display')) return { type: 'ubd2', steps: Array.from(slideElement.querySelectorAll('button[id^="ubd2-btn-"]')) };
+            if (slideElement.querySelector('#quiz-display')) return { type: 'quiz', steps: Array.from(slideElement.querySelectorAll('button[id^="quiz-btn-"]')) };
+            if (slideElement.querySelector('#unit-display')) return { type: 'unit', steps: Array.from(slideElement.querySelectorAll('button[id^="unit-btn-"]')) };
+            if (slideElement.querySelector('#reading-display')) return { type: 'reading', steps: Array.from(slideElement.querySelectorAll('button[id^="reading-btn-"]')) };
+            if (slideElement.querySelector('#multi-display')) return { type: 'multi', steps: Array.from(slideElement.querySelectorAll('button[id^="multi-btn-"]')) };
+            return { type: 'none', steps: [] };
+        }
+
+        function getActiveStepIndex(stepsInfo) {
+            const { type, steps } = stepsInfo;
+            for (let i = 0; i < steps.length; i++) {
+                if (steps[i].classList.contains('active')) return i;
+                if (type === 'reality' && steps[i].classList.contains('bg-cyan-900/30')) return i;
+                if (type === 'prompt' && steps[i].classList.contains('scale-110')) return i;
+                if (type === 'ubd2' && steps[i].classList.contains('bg-slate-800') && steps[i].firstElementChild.classList.contains('text-white')) return i;
+                if (type === 'quiz' && steps[i].classList.contains('bg-slate-800')) return i;
+                if (type === 'unit' && steps[i].classList.contains('bg-slate-800')) return i;
+                if (type === 'reading' && steps[i].classList.contains('bg-slate-800')) return i;
+                if (type === 'multi' && steps[i].classList.contains('bg-slate-800')) return i;
+            }
+            return 0;
+        }
+
+        function goToSlide(idx, reverse = false) {
+            if (idx >= 0 && idx < slides.length) {
+                currentSlide = idx;
+                updateUI();
+                
+                if (reverse) {
+                    const stepsInfo = getSlideStepsInfo(slides[currentSlide]);
+                    if (stepsInfo.steps.length > 0) {
+                        stepsInfo.steps[stepsInfo.steps.length - 1].click();
+                    }
+                }
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            const activeSlide = slides[currentSlide];
+            const stepsInfo = getSlideStepsInfo(activeSlide);
+
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+                e.preventDefault();
+                if (stepsInfo.steps.length > 0) {
+                    const currentIdx = getActiveStepIndex(stepsInfo);
+                    if (currentIdx < stepsInfo.steps.length - 1) {
+                        stepsInfo.steps[currentIdx + 1].click();
+                        return; // Advance the animation step, stay on slide
+                    }
+                }
+                goToSlide(currentSlide + 1); // Animations done, advance slide
+            }
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                if (stepsInfo.steps.length > 0) {
+                    const currentIdx = getActiveStepIndex(stepsInfo);
+                    if (currentIdx > 0) {
+                        stepsInfo.steps[currentIdx - 1].click();
+                        return; // Reverse the animation step, stay on slide
+                    }
+                }
+                goToSlide(currentSlide - 1, true); // True indicates we are traveling backwards
+            }
+        });
+
+        // --- Interactive Functions ---
+        const paradigmData = {
+            1: { title: "Passive Delivery", text: "Traditional reliance on static textbooks where educators act as deliverers of pre-packaged information.", border: "border-slate-500", icon: "fa-book" },
+            2: { title: "Context-Blind Oracle", text: "Treating AI as a primary author or 'oracle'. Yields generic, mathematically probable text devoid of actual pedagogical insight.", border: "border-amber-500", icon: "fa-robot" },
+            3: { title: "Co-Designer", text: "The essential mindset. Approaching AI as a highly capable but context-blind partner, requiring the educator to provide the architectural blueprint.", border: "border-brand-500", icon: "fa-handshake" }
+        };
+        function updateParadigmSlider() {
+            const val = document.getElementById('paradigm-slider').value;
+            const data = paradigmData[val];
+            const display = document.getElementById('paradigm-content');
+            if(display) {
+                display.className = `glass-panel p-16 rounded-[2rem] w-full min-h-[350px] flex flex-col justify-center border-t-[12px] ${data.border} shadow-2xl transition-all duration-300 bg-slate-900/90`;
+                display.innerHTML = `
+                    <i class="fas ${data.icon} text-6xl mb-6 text-slate-400"></i>
+                    <h4 class="text-4xl font-black text-white mb-6">${data.title}</h4>
+                    <p class="text-2xl text-slate-300 leading-relaxed">${data.text}</p>
+                `;
+            }
+        }
+
+        const scaffoldData = {
+            'vague': { title: "Pedagogical Flattening", text: "When given vague instructions, AI takes the 'path of least resistance,' defaulting to generic content targeting the lowest cognitive levels (basic factual recall). Materials lack rigor.", color: "text-rose-400", border: "border-rose-500" },
+            'context': { title: "Cognitive Scaffolding", text: "Systemically providing context acts as a cognitive scaffold for the AI, removing its need to 'guess.' By defining boundaries, you force the AI's processing power toward the specific cognitive operation you need.", color: "text-emerald-400", border: "border-emerald-500" }
+        };
+        function updateScaffold(type, element) {
+            document.querySelectorAll('#scaffold-display').forEach(d => {
+                const parent = d.parentElement;
+                if(parent) parent.querySelectorAll('.flow-node').forEach(n => n.classList.remove('active'));
+            });
+            if(element) element.classList.add('active');
+            const data = scaffoldData[type];
+            const display = document.getElementById('scaffold-display');
+            if(display) {
+                display.className = `glass-panel p-16 rounded-[3rem] border-l-[16px] ${data.border} h-full flex flex-col justify-center shadow-2xl bg-slate-900/90 transition-all duration-300`;
+                display.innerHTML = `
+                    <h3 class="text-5xl font-black text-white mb-8 ${data.color}">${data.title}</h3>
+                    <p class="text-3xl text-slate-300 leading-relaxed">${data.text}</p>
+                `;
+            }
+        }
+
+        const realityData = {
+            1: { title: "The Specific Audience", text: "Detail the grade level, developmental stage, and unique learning needs (e.g., EAL, ADHD, or gifted learners).", border: "border-cyan-500" },
+            2: { title: "The Foundation of Knowledge", text: "Detail what students already know versus what they have not yet mastered to ensure the content is appropriately challenging.", border: "border-slate-500" },
+            3: { title: "The Parameters of Success", text: "Explicitly state the required format, time constraints, and the specific learning objectives the material must satisfy.", border: "border-slate-500" }
+        };
+        function updateReality(step) {
+            [1,2,3].forEach(i => {
+                const btn = document.getElementById(`real-btn-${i}`);
+                if(btn) {
+                    if(i === step) {
+                        btn.classList.add('bg-cyan-900/30'); btn.classList.remove('hover:bg-slate-800');
+                        btn.firstElementChild.classList.remove('text-slate-400'); btn.firstElementChild.classList.add('text-white');
+                    } else {
+                        btn.classList.remove('bg-cyan-900/30'); btn.classList.add('hover:bg-slate-800');
+                        btn.firstElementChild.classList.remove('text-white'); btn.firstElementChild.classList.add('text-slate-400');
+                    }
+                }
+            });
+            const data = realityData[step];
+            const display = document.getElementById('reality-display');
+            if(display) {
+                display.className = `glass-panel h-full rounded-[2.5rem] p-16 border-t-[16px] border-cyan-500 flex flex-col justify-center shadow-2xl bg-slate-900/95 transition-all duration-300`;
+                display.innerHTML = `<h4 class="text-5xl font-black text-white mb-8">${data.title}</h4><p class="text-3xl text-slate-300 leading-relaxed">${data.text}</p>`;
+            }
+        }
+
+        const tacData = {
+            1: { title: "Automated Typewriter", text: "Treating AI as a tool that just spits out text causes pedagogical flattening. Professional judgment is sidelined.", icon: "fa-robot", border: "border-slate-700" },
+            2: { title: "Creative Director", text: "The TAC model positions AI explicitly as a 'thought partner'. The educator remains the 'Creative Director' in the loop, providing pedagogical validation and cultural mediation.", icon: "fa-user-tie", border: "border-brand-500" }
+        };
+        function updateTACSlider() {
+            const el = document.getElementById('tac-v-slider');
+            if(!el) return;
+            const val = el.value;
+            const data = tacData[val];
+            const display = document.getElementById('tac-v-content');
+            if(display) {
+                display.className = `glass-panel p-20 rounded-[3rem] border-[6px] ${data.border} flex-1 flex flex-col justify-center shadow-2xl transition-all duration-300 bg-slate-900/90`;
+                display.innerHTML = `
+                    <i class="fas ${data.icon} text-brand-400 text-6xl mb-6"></i>
+                    <h4 class="text-5xl font-black text-white mb-6">${data.title}</h4>
+                    <p class="text-3xl text-slate-300 leading-relaxed">${data.text}</p>
+                `;
+            }
+        }
+
+        const fourpData = {
+            1: { title: "1. Prepare", desc: "Clarify purpose, success criteria, and constraints before you ever prompt. Define the task, set your criteria (alignment, differentiation, equity), and gather context (links, rubrics, policies).", prompt: "Decide what not to ask AI to do (e.g., confidential student data)." },
+            2: { title: "2. Prime", desc: "Give the model the context it lacks. Describe your role, your specific audience, and the foundation of knowledge. Ground the resource by pasting exact excerpts from the curriculum.", prompt: "Provide 'Exemplars' of what good looks like." },
+            3: { title: "3. Partner", desc: "Engage in an intentional dialogue. Reject the first draft. Force the algorithm into self-critique against your pedagogical expertise.", prompt: "Iteratively steer the tool toward alignment." },
+            4: { title: "4. Polish", desc: "Reassert human sovereignty. Audit texts for hallucinations, conduct equity checks to ensure language does not alienate groups, and verify against curriculum.", prompt: "Finalize and archive successful prompts." }
+        };
+        function setFourPStep(step) {
+            [1,2,3,4].forEach(i => {
+                const btn = document.getElementById(`fp-step-${i}`);
+                if(btn) {
+                    if(i === step) btn.className = "stepper-btn-4p active relative z-10 w-24 h-24 rounded-full font-black text-4xl transition border-[5px] border-slate-900 bg-cyan-600 text-white scale-110 shadow-[0_0_20px_rgba(8,145,178,0.5)]";
+                    else btn.className = "stepper-btn-4p relative z-10 w-24 h-24 rounded-full font-black text-4xl transition bg-slate-800 text-slate-500 border-[5px] border-slate-900 hover:bg-slate-700";
+                }
+            });
+            const data = fourpData[step];
+            const display = document.getElementById('fourp-display');
+            if(display) {
+                display.innerHTML = `
+                    <h3 class="text-4xl font-black text-white mb-6">${data.title}</h3>
+                    <p class="text-2xl text-slate-300 mb-8 leading-relaxed">${data.desc}</p>
+                    <div class="mt-auto bg-[#0d1117] border border-slate-800 rounded-2xl p-8 shadow-inner">
+                        <p class="font-mono text-xl text-cyan-300 leading-relaxed"><i class="fas fa-lightbulb text-amber-400 mr-3"></i> ${data.prompt}</p>
+                    </div>
+                `;
+            }
+        }
+
+        const promptData = {
+            1: { title: "1 - Poor", badgeClass: "bg-rose-500/20 text-rose-400 border border-rose-500/50", prompt: "Make a lesson plan about democracy in ancient Athens.", why: "Vague task, no grade, outcome, time, or student context. Offers the “AI-as-magic” expectation that the model will guess everything. Likely produces generic, teacher-centred content with little curricular alignment." },
+            2: { title: "2 - Fair", badgeClass: "bg-orange-500/20 text-orange-400 border border-orange-500/50", prompt: "Create a one-hour lesson for Grade 6 on democracy in ancient Athens.", why: "Adds grade level and duration but still omits the Alberta organizing idea, guiding question, learning outcome, learner needs, and assessment. Minimal scaffolding means output may only loosely match curriculum and exclude student voice." },
+            3: { title: "3 - Adequate", badgeClass: "bg-amber-500/20 text-amber-400 border border-amber-500/50", prompt: "You are my planning assistant. I need a Grade 6 social-studies lesson (50 min) introducing democracy’s roots in ancient Athens. Must address: equality under law, voting, and citizen roles. Include an exit ticket.", why: "References some key knowledge from the curriculum (e.g., Athenian equality, voting) and asks for assessment, but still neglects the broader outcome (students relate ancient principles to systems across time and place), ignores Indigenous or modern connections, and offers no differentiation or student-centred inquiry." },
+            4: { title: "4 - Good", badgeClass: "bg-emerald-500/20 text-emerald-400 border border-emerald-500/50", prompt: "As a thought partner, help me draft a 60-min Grade 6 lesson aligned with Alberta’s Organizing Idea Time & Place and the outcome ‘students relate the foundational principles of democracy to government systems through time.’ Include:<br><br>➤ an inquiry question linking Athenian direct democracy to Canada today,<br>➤ a primary-source analysis activity (e.g., Pericles’ Funeral Oration),<br>➤ choice-based formative check,<br>➤ adaptations for EAL learners, and<br>➤ an extension comparing Haudenosaunee consensus decision-making.", why: "Integrates the organizing idea, guiding question, and outcome; names concrete activities, formative assessment, and differentiation; begins to weave Indigenous comparison (Haudenosaunee). Still lacks explicit student competencies and success criteria language." },
+            5: { title: "5 - Excellent", badgeClass: "bg-brand-500/20 text-brand-400 border border-brand-500/50", prompt: "You are my co-planner (smart intern). Use the 4P cycle.<br><br><b class='text-brand-300'>Prepare ►</b> Context: Grade 6 in Alberta; diverse class incl. EAL & ADHD; curriculum outcome ‘students relate the foundational principles of democracy to government systems throughout time & place.’<br><br><b class='text-brand-300'>Prime ►</b> Resources: excerpts on Athenian direct democracy (citizens/metics/slaves, lottery, debate, secret ballots), and Canadian parliamentary structure for comparison.<br><br><b class='text-brand-300'>Partner ►</b> Design a 70-min, student-centred lesson that: 1) launches with the guiding question ‘How can history provide insight into modern democracies?’; 2) uses jigsaw groups to analyse Athenian and Haudenosaunee decision-making texts; 3) culminates in a Socratic seminar where students co-create a Venn diagram of ancient vs. Canadian principles; 4) embeds a competency-based rubric (communication, critical thinking, citizenship).<br><br><b class='text-brand-300'>Polish ►</b> Provide equity checks (gender/exclusion in ancient Athens), Indigenous perspectives, adaptations (visual supports, sentence frames), and a 3-question exit reflection tied to success criteria. Output in table form (timings, materials, UDL notes) and flag any claims needing verification.", why: "Exemplifies the AI-as-thought-partner metaphor: clear role, rich context, explicit curriculum links, Indigenous and modern connections, differentiated strategies, assessment criteria, and an equity lens. Guides the model through Prepare–Prime–Partner–Polish, ensuring high-quality, culturally sensitive, student-centred, competency-based planning." }
+        };
+        function setPromptStep(step) {
+            const colors = ['bg-rose-500', 'bg-orange-500', 'bg-amber-500', 'bg-emerald-500', 'bg-brand-500'];
+            const shadows = ['shadow-[0_0_20px_rgba(244,63,94,0.5)]', 'shadow-[0_0_20px_rgba(249,115,22,0.5)]', 'shadow-[0_0_20px_rgba(245,158,11,0.5)]', 'shadow-[0_0_20px_rgba(16,185,129,0.5)]', 'shadow-[0_0_20px_rgba(14,165,233,0.5)]'];
+
+            [1,2,3,4,5].forEach(i => {
+                const btn = document.getElementById(`step-${i}`);
+                if(btn) {
+                    if (i === step) {
+                        btn.className = `stepper-btn relative z-10 w-20 h-20 rounded-full font-black text-3xl transition border-[4px] border-slate-900 text-white scale-110 ${colors[i-1]} ${shadows[i-1]}`;
+                    } else {
+                        btn.className = `stepper-btn relative z-10 w-20 h-20 rounded-full font-black text-3xl transition border-[4px] border-slate-900 bg-slate-800 text-slate-500 hover:bg-slate-700`;
+                    }
+                }
+            });
+            
+            const data = promptData[step];
+            const display = document.getElementById('prompt-display');
+            if(display) {
+                display.innerHTML = `
+                    <div class="flex items-center mb-6 border-b border-slate-700 pb-4 shrink-0">
+                        <h4 class="text-3xl font-black text-white flex items-center">Rating: <span class="ml-4 px-4 py-1 rounded-lg text-xl font-bold ${data.badgeClass}">${data.title}</span></h4>
+                    </div>
+                    <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-0">
+                        <div class="bg-[#0d1117] border-2 border-slate-800 rounded-3xl p-8 shadow-inner flex flex-col overflow-y-auto">
+                            <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-6 shrink-0"><i class="fas fa-keyboard mr-2"></i> Teacher Prompt</p>
+                            <p class="font-mono text-lg text-cyan-300 leading-relaxed">${data.prompt}</p>
+                        </div>
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-3xl p-8 flex flex-col overflow-y-auto">
+                            <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-6 shrink-0"><i class="fas fa-microscope mr-2"></i> Why it ranks this way</p>
+                            <p class="text-xl text-slate-300 leading-relaxed">${data.why}</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function activateAccordion(el) {
+            el.parentNode.querySelectorAll('.h-accordion-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        const flowData = {
+            'intended': { title: "The Intended Curriculum", text: "The formal goals, standards, and frameworks established by governing bodies and departments of education." },
+            'enacted': { title: "The Enacted Curriculum", text: "The actual instructional events, interactions, and multi-modal experiences mediated by teachers in the physical or digital classroom." },
+            'attained': { title: "The Attained Curriculum", text: "The specific knowledge, conceptual skills, and cognitive dispositions that students successfully internalize and can demonstrate." }
+        };
+        function updateCurriculumFlow(type, element) {
+            document.querySelectorAll('#curriculum-flow-content').forEach(d => {
+                const parent = d.parentElement;
+                if(parent) parent.querySelectorAll('.flow-node').forEach(n => n.classList.remove('active'));
+            });
+            if(element) element.classList.add('active');
+            const data = flowData[type];
+            const display = document.getElementById('curriculum-flow-content');
+            if(display) {
+                display.innerHTML = `<h4 class="text-4xl font-black text-white mb-6">${data.title}</h4><p class="text-2xl text-slate-300 leading-relaxed">${data.text}</p>`;
+            }
+        }
+
+        function updateComparisonSlider(id, val) {
+            const topLayer = document.getElementById(`top-layer-${id}`);
+            const divider = document.getElementById(`divider-${id}`);
+            if(topLayer && divider) {
+                topLayer.style.clipPath = `polygon(0 0, ${val}% 0, ${val}% 100%, 0 100%)`;
+                divider.style.left = `${val}%`;
+            }
+        }
+
+        function updateRealDOK(type, element) {
+            document.querySelectorAll('#real-dok-display').forEach(d => {
+                const parent = d.parentElement.parentElement;
+                if(parent) parent.querySelectorAll('.mind-node').forEach(n => n.classList.remove('active'));
+            });
+            if(element) element.classList.add('active');
+            const display = document.getElementById('real-dok-display');
+            if(!display) return;
+            
+            const dokData = {
+                'l1': { 
+                    title: "Level 1: Recall and Reproduction", 
+                    focus: "Relies on the basic recall or reproduction of facts, terms, details, calculations, principles, or simple procedures.", 
+                    demand: "Students are not asked to transform the target knowledge; they simply retrieve it from memory. A student either knows the answer or does not.", 
+                    examples: "Reciting math facts, identifying parts of speech, using a map key to locate information, or performing routine measurements.",
+                    color: "slate" 
+                },
+                'l2': { 
+                    title: "Level 2: Skills and Concepts", 
+                    focus: "Students must demonstrate their understanding by applying multiple concepts or skills to new situations.", 
+                    demand: "Tasks require processing beyond simple recall. Students are asked to transform information by comparing, classifying, organizing, summarizing, estimating, or making basic inferences.", 
+                    examples: "Identifying and summarizing the major events in a narrative, describing cause-and-effect relationships, interpreting data from a graph, or creating graphic organizers and timelines.",
+                    color: "brand" 
+                },
+                'l3': { 
+                    title: "Level 3: Strategic Thinking and Reasoning", 
+                    focus: "Demands higher-order, short-term strategic thinking, planning, and reasoning to solve real-world problems or explore questions with multiple outcomes.", 
+                    demand: "Tasks require an in-depth integration of conceptual knowledge. A key marker is that must be able to state reasoning and provide supporting evidence for claims.", 
+                    examples: "Writing a literary critique, designing a scientific investigation, participating in a debate, or developing a mathematical model.",
+                    color: "orange" 
+                },
+                'l4': { 
+                    title: "Level 4: Extended Thinking", 
+                    focus: "Involves complex reasoning, critical and creative-productive thinking, reflection, and the adjustment of plans over an extended period of time.", 
+                    demand: "Students must engage in multifaceted investigations, analyze and synthesize information from multiple sources, and tackle authentic, real-world problems.", 
+                    examples: "Conducting an original research project, creating a documentary, or evaluating historical themes across cultures.",
+                    color: "purple" 
+                }
+            };
+
+            const data = dokData[type];
+            display.innerHTML = `
+                <h3 class="text-4xl font-black text-white mb-6 shrink-0">${data.title}</h3>
+                <div class="space-y-6 overflow-y-auto pr-4 flex-1">
+                    <div>
+                        <h5 class="text-sm text-${data.color}-400 font-bold uppercase tracking-widest mb-2"><i class="fas fa-bullseye mr-2"></i>Focus</h5>
+                        <p class="text-lg text-slate-300 leading-relaxed">${data.focus}</p>
+                    </div>
+                    <div>
+                        <h5 class="text-sm text-${data.color}-400 font-bold uppercase tracking-widest mb-2"><i class="fas fa-brain mr-2"></i>Cognitive Demand</h5>
+                        <p class="text-lg text-slate-300 leading-relaxed">${data.demand}</p>
+                    </div>
+                    <div class="bg-${data.color}-900/20 border-l-[4px] border-${data.color}-500 p-5 rounded-r-xl">
+                        <h5 class="text-xs text-${data.color}-300 font-bold uppercase tracking-widest mb-2">Examples</h5>
+                        <p class="text-base text-white leading-relaxed">${data.examples}</p>
+                    </div>
+                </div>
+            `;
+            let borderColor = data.color === 'brand' ? 'brand-500' : `${data.color}-500`;
+            display.className = `glass-panel w-full h-full rounded-[2.5rem] p-10 border-l-[16px] border-${borderColor} shadow-2xl flex flex-col transition-all duration-300 overflow-hidden`;
+        }
+
+        const ubd2Data = {
+            1: { title: "Stage 1: Identify Desired Results", text: "Educators must first prompt the AI with the specific Alberta grades 7-9 learner outcomes to establish the precise instructional destination." },
+            2: { title: "Stage 2: Determine Acceptable Evidence", text: "Command the AI to design assessments and rubrics that measure the required DOK <b>before</b> generating any day-to-day activities." },
+            3: { title: "Stage 3: Plan Learning Experiences", text: "Only after outcomes and evidence are locked in should AI be utilized to curate activities and multi-modal scaffolds." }
+        };
+        function updateUBD2(step) {
+            [1,2,3].forEach(i => {
+                const btn = document.getElementById(`ubd2-btn-${i}`);
+                if(btn) {
+                    if(i === step) { btn.classList.add('bg-slate-800'); btn.firstElementChild.classList.replace('text-slate-400', 'text-white'); }
+                    else { btn.classList.remove('bg-slate-800'); btn.firstElementChild.classList.replace('text-white', 'text-slate-400'); }
+                }
+            });
+            const data = ubd2Data[step];
+            const display = document.getElementById('ubd2-display');
+            if(display) display.innerHTML = `<h4 class="text-5xl font-black text-white mb-8">${data.title}</h4><p class="text-3xl text-slate-300 leading-relaxed">${data.text}</p>`;
+        }
+
+        // Slide 27 Quiz MCQs
+        const quizData = {
+            1: { 
+                title: "Step 1: Determine the learning goals being measured", 
+                text: "AI relies entirely on the information you provide; it cannot guess the nuances of your Social Studies 30 classroom. Explicitly state the complete instructional context, including the specific learning outcomes, state or national standards, and the specific historical knowledge and skills the quiz must measure. Providing these clear parameters acts as a cognitive scaffold, preventing the AI from generating generic or irrelevant content.", 
+                color: "brand", icon: "fa-bullseye" 
+            },
+            2: { 
+                title: "Step 2: Determine the depth of knowledge (DOK)", 
+                text: "By default, generative AI will take the path of least resistance and produce \"safe\" content that targets the lowest cognitive levels (basic factual recall). To build a rigorous quiz, you must explicitly request higher cognitive levels.<br><br><div class='bg-orange-900/20 p-4 border-l-4 border-orange-500 rounded-r-lg mb-4'><b class='text-orange-400'>Prompt for DOK-2 (Skill/Concept):</b> Provide background to the AI that this level requires students to apply their understanding to answer \"how\" and \"why\" questions, make inferences, or identify patterns in historical events.</div><div class='bg-orange-900/20 p-4 border-l-4 border-orange-500 rounded-r-lg'><b class='text-orange-400'>Prompt for DOK-3 (Strategic Thinking):</b> Describe to the AI that this level involves problem-solving, strategizing, and developing logical arguments or assessing claims.</div><br>By feeding the AI frameworks like Webb's DOK, you force the model out of its default recall mode.", 
+                color: "orange", icon: "fa-layer-group" 
+            },
+            3: { 
+                title: "Step 3: Provide the specific sources", 
+                text: "Language models are prone to \"hallucinations\"—confidently inventing false historical facts or dates—and their default outputs often reflect generic internet data rather than your specific curriculum. If your Social Studies quiz requires source-based questions, you must anchor the AI by uploading or pasting the exact primary or secondary sources you want it to use. Instructing the AI to base its questions solely on your provided reference texts dramatically improves accuracy and contextual relevance.", 
+                color: "pink", icon: "fa-file-alt" 
+            },
+            4: { 
+                title: "Step 4: Prompt specifically", 
+                text: "A highly specific prompt is the foundation of high-quality output. Instead of a vague request like \"make a quiz,\" you must explicitly define the scope and constraints. Tell the AI exactly:<br><br><ul class='list-disc list-inside space-y-2 ml-4'><li>How many questions you need (e.g., 10 questions)</li><li>The format (multiple-choice with four options each)</li><li>The target audience (e.g., 12th-grade students)</li><li>Specific elements to include (such as requiring a brief explanation for why the correct answer is right and why the distractors are wrong).</li></ul>", 
+                color: "cyan", icon: "fa-keyboard" 
+            },
+            5: { 
+                title: "Step 5: Review output and iterate", 
+                text: "Never accept the AI's first output as a final product; view it simply as a rough first draft. High-quality materials are built through an iterative feedback loop. Review the questions to see if they genuinely meet the DOK 2-3 threshold. If some questions are too simplistic or miss the mark, use layer prompting to give the AI corrective feedback.<br><br><div class='bg-purple-900/20 p-4 border border-purple-500/50 rounded-lg text-purple-200 italic'>\"Questions 3 and 4 are just testing memorization. Rewrite them to require students to analyze the provided source document to determine the author's bias.\"</div>", 
+                color: "purple", icon: "fa-sync-alt" 
+            },
+            6: { 
+                title: "Step 6: Export and refine", 
+                text: "Finally, you must remain the \"human-in-the-loop\". Export the quiz to a document where you can act as the mandatory author of record. You must manually verify every date, fact, and historical claim against credible sources, as AI can still make reasoning errors or embed subtle biases. This final human refinement guarantees that the assessment is perfectly tailored to your students, pedagogically sound, and ready for the classroom.", 
+                color: "emerald", icon: "fa-user-check" 
+            }
+        };
+
+        function updateQuizStep(step) {
+            [1,2,3,4,5,6].forEach(i => {
+                const btn = document.getElementById(`quiz-btn-${i}`);
+                if(btn) {
+                    const badge = btn.firstElementChild;
+                    const text = btn.lastElementChild;
+                    if(i === step) { 
+                        btn.classList.add('bg-slate-800'); 
+                        text.classList.replace('text-slate-400', 'text-white');
+                        badge.className = `w-8 h-8 rounded-full bg-slate-950 border border-${quizData[i].color}-500 flex items-center justify-center mr-4 shrink-0 font-black text-${quizData[i].color}-400 text-sm transition-colors`;
+                    } else { 
+                        btn.classList.remove('bg-slate-800'); 
+                        text.classList.replace('text-white', 'text-slate-400');
+                        badge.className = `w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors`;
+                    }
+                }
+            });
+            const data = quizData[step];
+            const display = document.getElementById('quiz-display');
+            if(display) {
+                display.className = `glass-panel h-full rounded-[2.5rem] p-12 border-t-[12px] border-${data.color}-500 flex flex-col shadow-2xl bg-slate-900/95 transition-all duration-300 min-h-0`;
+                display.innerHTML = `
+                    <h4 class="text-3xl font-black text-white mb-6 shrink-0 flex items-center"><i class="fas ${data.icon} text-${data.color}-400 mr-4 text-4xl"></i> ${data.title}</h4>
+                    <div class="overflow-y-auto pr-4 text-xl text-slate-300 leading-relaxed flex-1">${data.text}</div>
+                `;
+            }
+        }
+
+        // Slide 28 Unit Plan
+        const unitData = {
+            1: {
+                title: "Step 1: Determine your planning framework",
+                subtitle: "Understanding by Design (UbD)",
+                text: "AI models need a structural scaffold to organize their outputs effectively. By explicitly identifying that you are using the 'Understanding by Design' (UbD) framework, you provide the AI with a conceptual boundary. This forces the model to work backward—focusing first on the end goals rather than immediately generating random classroom activities.",
+                icon: "fa-project-diagram", color: "indigo"
+            },
+            2: {
+                title: "Step 2: Determine your desired results",
+                subtitle: "Organizing Ideas, Guiding Questions, Outcomes, KUSPs",
+                text: "Generative AI has no inherent knowledge of your specific state or provincial curriculum. In this step, you must feed the AI the exact parameters of success: the organizing ideas, guiding questions, and specific Knowledge, Understandings, Skills, and Procedures (KUSPs). By providing this information in a structured format, you anchor the AI to your specific reality, preventing it from inventing irrelevant objectives or straying off-topic.",
+                icon: "fa-bullseye", color: "blue"
+            },
+            3: {
+                title: "Step 3: Align intended & enacted curriculum",
+                subtitle: "Bridging the Gap",
+                text: "This step is critical for preventing the 'alignment illusion.' You must explicitly guide the AI on the deep understandings and transfer goals you want students to achieve, not just the topical content. By detailing exactly how the knowledge should be transferred to real-world financial decisions, you ensure that the AI generates content that bridges the gap between what the state intends to be taught and the rigorous learning experiences you enact in the classroom.",
+                icon: "fa-link", color: "emerald"
+            },
+            4: {
+                title: "Step 4: Define acceptable evidence & context",
+                subtitle: "Bloom's Taxonomy, UDL, and Equity",
+                text: "<p class='mb-4'><b>Acceptable Evidence:</b> Without explicit direction, AI defaults to the lowest cognitive levels, resulting in 'pedagogical flattening.' You must define the cognitive work required using frameworks like Bloom's Taxonomy. Instruct it to design assessment tasks that require students to 'Analyze' a budget, 'Evaluate' financial risks, or 'Create' a career portfolio.</p><p><b>Classroom Context & UDL:</b> To achieve equity, you must proactively inject your classroom's specific context. Tell the AI about the unique learning needs of your students and explicitly prompt it to apply Universal Design for Learning (UDL) principles and culturally responsive pedagogy. This guides the AI to design accessible pathways (e.g., varied reading levels, diverse financial scenarios).</p>",
+                icon: "fa-balance-scale", color: "purple"
+            },
+            5: {
+                title: "Step 5: Build learning experiences",
+                subtitle: "Lesson Plans & Practical Constraints",
+                text: "Now that the foundational context is set, you guide the AI to generate the daily lesson plans. Specificity is paramount here. You must define the practical constraints: how many class periods, the length of the periods, and the number of students. Furthermore, you must supply your pedagogical preferences, explicitly requesting a blend of observations, conversations, and products, and mandating regular Checks for Understanding (CFUs) throughout the lesson.",
+                icon: "fa-chalkboard-teacher", color: "orange"
+            },
+            6: {
+                title: "Step 6: Build components & iterate",
+                subtitle: "Layer Prompting",
+                text: "Never ask the AI to build the entire unit in a single prompt. Working memory limits apply to AI prompts; overly complex requests lead to degraded outputs. Instead, use 'layer prompting' to build the unit component by component. Treat the AI's output for each lesson or assessment as a first draft, critically evaluate it against your pedagogical expertise, and iterate by giving the AI corrective feedback to refine the material.",
+                icon: "fa-layer-group", color: "rose"
+            },
+            7: {
+                title: "Step 7: Export and finalize",
+                subtitle: "The Human-in-the-Loop",
+                text: "Ultimately, you must maintain your role as the 'human-in-the-loop'. AI can confidently generate plausible-sounding but incorrect information (hallucinations) or embed subtle biases. Exporting the AI's work to an editable document allows you to take final ownership of the material. By manually verifying facts, refining the tone, and ensuring perfect alignment with your students' needs, you transform an AI-generated draft into a high-quality, equitable, and rigorous unit plan.",
+                icon: "fa-file-export", color: "brand"
+            }
+        };
+
+        function updateUnitStep(step) {
+            [1,2,3,4,5,6,7].forEach(i => {
+                const btn = document.getElementById(`unit-btn-${i}`);
+                if(btn) {
+                    const badge = btn.firstElementChild;
+                    const text = btn.lastElementChild;
+                    if(i === step) { 
+                        btn.classList.add('bg-slate-800'); 
+                        text.classList.replace('text-slate-400', 'text-white');
+                        badge.className = `w-8 h-8 rounded-full bg-slate-950 border border-${unitData[i].color}-500 flex items-center justify-center mr-4 shrink-0 font-black text-${unitData[i].color}-400 text-sm transition-colors`;
+                    } else { 
+                        btn.classList.remove('bg-slate-800'); 
+                        text.classList.replace('text-white', 'text-slate-400');
+                        badge.className = `w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors`;
+                    }
+                }
+            });
+            const data = unitData[step];
+            const display = document.getElementById('unit-display');
+            if(display) {
+                display.className = `glass-panel h-full rounded-[2.5rem] p-12 border-t-[12px] border-${data.color}-500 flex flex-col shadow-2xl bg-slate-900/95 transition-all duration-300 min-h-0`;
+                display.innerHTML = `
+                    <h4 class="text-3xl font-black text-white mb-2 shrink-0 flex items-center"><i class="fas ${data.icon} text-${data.color}-400 mr-4 text-4xl"></i> ${data.title}</h4>
+                    <h5 class="text-xl font-bold text-${data.color}-300 mb-8 tracking-wide">${data.subtitle}</h5>
+                    <div class="overflow-y-auto pr-4 text-xl text-slate-300 leading-relaxed flex-1">${data.text}</div>
+                `;
+            }
+        }
+
+        // Slide 29 Student Reading
+        const readingData = {
+            1: {
+                title: "Step 1: Provide specific curriculum references",
+                subtitle: "Content, Skills, Understandings",
+                text: "AI systems operate without inherent knowledge of your local curriculum standards or the specific cognitive operations you want students to perform. In this foundational step, you must explicitly feed the AI the exact learning outcomes, historical skills, and deep understandings required by the curriculum. Providing this detailed context prevents the AI from generating 'pedagogically flattened' content that only targets low-level recall. By specifying the skills and understandings, you anchor the AI to your specific instructional reality, ensuring the resulting text genuinely supports the enacted and attained curriculum.",
+                icon: "fa-map-signs", color: "brand"
+            },
+            2: {
+                title: "Step 2: Determine reading levels",
+                subtitle: "Prompt for a UDL approach",
+                text: "Classrooms contain diverse learners, and a single reading passage rarely serves everyone. You can use the AI to systematically dismantle barriers by employing a Universal Design for Learning (UDL) framework. Instruct the AI to generate multiple versions of the text—at, below, and above the target 7th-grade reading level. However, you must systematically provide the constraint of rigor. Explicitly instruct the AI to simplify the vocabulary and sentence structure for the lower-level texts without removing the core historical concepts, essential questions, or cognitive demand. This ensures that all students are wrestling with the same rigorous historical ideas, just through accessible pathways.",
+                icon: "fa-layer-group", color: "indigo"
+            },
+            3: {
+                title: "Step 3a: Provide key details",
+                subtitle: "Targeted aspects of MacDonald's life and career",
+                text: "Because language models are trained on vast amounts of internet data, they can easily drift off-topic, provide irrelevant information, or confidently invent false historical claims (hallucinations). You must bound the AI's output by explicitly defining the scope of the content. By detailing exactly which political events, policies, or periods of MacDonald's career you want highlighted, you provide a closed framework for the AI to operate within, dramatically increasing the relevance and accuracy of the first draft.",
+                icon: "fa-bullseye", color: "amber"
+            },
+            4: {
+                title: "Step 3b: Culturally Responsive Pedagogy",
+                subtitle: "CRP & Indigenous perspectives",
+                text: "This is perhaps the most critical contextual step. Left to its own devices, generative AI tends to reproduce dominant, monocultural worldviews and often marginalizes or erases the voices of Indigenous peoples and other marginalized groups. To build a culturally responsive resource, you must actively counteract this algorithmic bias. You must explicitly instruct the AI to apply a 'transformation approach'—framing the historical narrative to include the lived experiences and perspectives of Indigenous peoples. By systematically mandating that the AI does not gloss over the harmful impacts of MacDonald's policies on marginalized communities, you ensure the resource is equitable, historically comprehensive, and culturally resonant.",
+                icon: "fa-globe-americas", color: "emerald"
+            },
+            5: {
+                title: "Step 4: Iterate with the AI at each stage",
+                subtitle: "Ensure accuracy and nuance",
+                text: "Do not accept the AI's initial output as a finished product. Building high-quality resources is an interactive, iterative dialogue. Use 'layer prompting' to review the AI's drafts and provide corrective feedback.<br><br><div class='bg-rose-900/20 p-4 border border-rose-500/50 rounded-lg text-rose-200 italic'>\"This draft is too one-sided. Rewrite the third paragraph to explicitly include the historical impact of these policies on Indigenous communities, using a more objective and critical tone.\"</div>",
+                icon: "fa-sync-alt", color: "rose"
+            },
+            6: {
+                title: "Step 5: Export, revise, and verify",
+                subtitle: "Final fact and sensitivity check",
+                text: "Finally, you must export the text to an editable document and assume the role of the 'mandatory author of record'. AI lacks genuine human empathy, moral reasoning, and an understanding of the real-world sensitivities of your specific students. You must manually verify every historical fact, date, and claim against credible primary or secondary sources, as the AI may still embed subtle biases or errors. Carefully reviewing the text for cultural sensitivity ensures that the final resource is not only historically accurate but also safe, respectful, and perfectly tailored for the learners in your classroom.",
+                icon: "fa-check-circle", color: "purple"
+            }
+        };
+
+        function updateReadingStep(step) {
+            [1,2,3,4,5,6].forEach(i => {
+                const btn = document.getElementById(`reading-btn-${i}`);
+                if(btn) {
+                    const badge = btn.firstElementChild;
+                    const text = btn.lastElementChild;
+                    if(i === step) { 
+                        btn.classList.add('bg-slate-800'); 
+                        text.classList.replace('text-slate-400', 'text-white');
+                        badge.className = `w-8 h-8 rounded-full bg-slate-950 border border-${readingData[i].color}-500 flex items-center justify-center mr-4 shrink-0 font-black text-${readingData[i].color}-400 text-sm transition-colors`;
+                    } else { 
+                        btn.classList.remove('bg-slate-800'); 
+                        text.classList.replace('text-white', 'text-slate-400');
+                        badge.className = `w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors`;
+                    }
+                }
+            });
+            const data = readingData[step];
+            const display = document.getElementById('reading-display');
+            if(display) {
+                display.className = `glass-panel h-full rounded-[2.5rem] p-12 border-t-[12px] border-${data.color}-500 flex flex-col shadow-2xl bg-slate-900/95 transition-all duration-300 min-h-0`;
+                display.innerHTML = `
+                    <h4 class="text-3xl font-black text-white mb-2 shrink-0 flex items-center"><i class="fas ${data.icon} text-${data.color}-400 mr-4 text-4xl"></i> ${data.title}</h4>
+                    <h5 class="text-xl font-bold text-${data.color}-300 mb-8 tracking-wide">${data.subtitle}</h5>
+                    <div class="overflow-y-auto pr-4 text-xl text-slate-300 leading-relaxed flex-1">${data.text}</div>
+                `;
+            }
+        }
+
+        // Slide 30 Multi-Modal Content
+        const multiData = {
+            1: {
+                title: "Step 1: Ground the AI in UDL and Context",
+                subtitle: "Dismantling Barriers",
+                text: "AI systems do not inherently understand the diverse cognitive, linguistic, or sensory needs of your 7th-grade students. If you simply ask an AI to \"make this text easier,\" it will arbitrarily remove content, potentially sacrificing the historical rigor of the lesson. To prevent this, you must explicitly construct the instructional environment by feeding the AI the Universal Design for Learning (UDL) framework and detailing your students' specific learner profiles (e.g., reading levels, English language proficiency, or attention needs). By pasting the original John A. Macdonald reading and asking the AI to brainstorm transformations through the lens of UDL, you force the AI to act as an accessibility expert. This contextual scaffold ensures the AI's brainstorm focuses on providing multiple means of representation without losing the core historical narrative.",
+                icon: "fa-users-cog", color: "brand"
+            },
+            2: {
+                title: "Step 2: Systematically Match the AI Tool to Modality",
+                subtitle: "Gemini & NotebookLM",
+                text: "Once the AI has brainstormed transformations, you must purposefully select the right generative tools to execute those ideas. Different AI platforms excel at different cognitive and creative tasks:<br><br><ul class='list-disc list-inside space-y-4 ml-2'><li><b>Text-Based Scaffolding (Gemini):</b> Use a conversational model like Gemini to systematically break down the text. Prompt it to extract bullet-point summaries of Macdonald's key policies or generate vocabulary scaffolds that provide student-friendly definitions and visual descriptions for complex historical terms.</li><li><b>Multi-Modal Transformation (NotebookLM):</b> Use an AI tool like NotebookLM, designed to synthesize uploaded documents, to create entirely new modalities. Guide it to generate an audio podcast discussing the reading (supporting auditory learners), or prompt it to organize the information into an infographic structure (supporting visual learners in mapping out timelines or impacts).</li></ul>",
+                icon: "fa-tools", color: "indigo"
+            },
+            3: {
+                title: "Step 3: Iterative Review and Fact Check",
+                subtitle: "Addressing Hallucinations and Bias",
+                text: "Because AI models recognize text patterns rather than genuinely understanding real-world history, they can confidently generate plausible but entirely false information, known as \"hallucinations\". Furthermore, AI defaults to dominant cultural narratives, which can easily gloss over the nuanced or harmful impacts of Macdonald's policies on Indigenous communities. At this stage, you must firmly assert your role as the \"human-in-the-loop\" and creative director. Do not accept the AI's generated podcasts, summaries, or infographics as final products. You must critically evaluate every output against historical accuracy and cultural sensitivity. If the AI's podcast script lacks necessary critique, use iterative layer prompting to demand corrections (e.g., <i class='text-amber-300'>\"Rewrite this section to ensure it addresses the perspectives of Indigenous peoples regarding these policies\"</i>).",
+                icon: "fa-user-check", color: "amber"
+            },
+            4: {
+                title: "Step 4: Deploy for Universal Accessibility",
+                subtitle: "Packaging the Final Experience",
+                text: "The final step in providing context is ensuring the enacted curriculum matches the intended equity goals. Once the multi-modal suite (leveled texts, vocabulary lists, audio podcasts, and infographics) is refined and accurate, it must be packaged and distributed in a way that allows students to exercise agency. By housing these varied resources in a universally accessible location (such as a centralized Learning Management System), you allow students to choose the format that best supports their individual learning style. This final human step ensures that the AI-generated differentiation translates into a genuinely accessible, classroom-ready experience.",
+                icon: "fa-universal-access", color: "emerald"
+            }
+        };
+
+        function updateMultiStep(step) {
+            [1,2,3,4].forEach(i => {
+                const btn = document.getElementById(`multi-btn-${i}`);
+                if(btn) {
+                    const badge = btn.firstElementChild;
+                    const text = btn.lastElementChild;
+                    if(i === step) { 
+                        btn.classList.add('bg-slate-800'); 
+                        text.classList.replace('text-slate-400', 'text-white');
+                        badge.className = `w-8 h-8 rounded-full bg-slate-950 border border-${multiData[i].color}-500 flex items-center justify-center mr-4 shrink-0 font-black text-${multiData[i].color}-400 text-sm transition-colors`;
+                    } else { 
+                        btn.classList.remove('bg-slate-800'); 
+                        text.classList.replace('text-white', 'text-slate-400');
+                        badge.className = `w-8 h-8 rounded-full bg-slate-950 border border-slate-600 flex items-center justify-center mr-4 shrink-0 font-black text-slate-500 text-sm transition-colors`;
+                    }
+                }
+            });
+            const data = multiData[step];
+            const display = document.getElementById('multi-display');
+            if(display) {
+                display.className = `glass-panel h-full rounded-[2.5rem] p-12 border-t-[12px] border-${data.color}-500 flex flex-col shadow-2xl bg-slate-900/95 transition-all duration-300 min-h-0`;
+                display.innerHTML = `
+                    <h4 class="text-3xl font-black text-white mb-2 shrink-0 flex items-center"><i class="fas ${data.icon} text-${data.color}-400 mr-4 text-4xl"></i> ${data.title}</h4>
+                    <h5 class="text-xl font-bold text-${data.color}-300 mb-8 tracking-wide">${data.subtitle}</h5>
+                    <div class="overflow-y-auto pr-4 text-xl text-slate-300 leading-relaxed flex-1">${data.text}</div>
+                `;
+            }
+        }
+
+        // Charts Setup
+        Chart.defaults.color = '#94a3b8'; Chart.defaults.font.family = 'Inter'; Chart.defaults.font.size = 14;
+        function renderChart(type) {
+            if (chartInstances[type]) chartInstances[type].destroy(); 
+            if (type === 'efficiency') {
+                const canvas = document.getElementById('chart-efficiency');
+                if(!canvas) return;
+                const ctx = canvas.getContext('2d');
+                chartInstances.efficiency = new Chart(ctx, {
+                    type: 'bar',
+                    data: { labels: ['Admin/Clerical', 'Drafting', 'Coaching'], datasets: [
+                        { label: 'Traditional', data: [10, 8, 12], backgroundColor: '#334155', borderRadius: 8 },
+                        { label: 'TAC Paradigm', data: [8, 6, 16], backgroundColor: '#38bdf8', borderRadius: 8 }
+                    ]},
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: '#1e293b' } }, x: { grid: { display: false } } } }
+                });
+            }
+            if (type === 'dip') {
+                const canvas = document.getElementById('chart-dip');
+                if(!canvas) return;
+                const ctx = canvas.getContext('2d');
+                chartInstances.dip = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Innovation Introduced', 'Unlearning Routines', 'The Implementation Dip', 'Mitigation Strategies', 'Pedagogical Mastery'],
+                        datasets: [{
+                            label: 'Educator Confidence & Performance',
+                            data: [80, 55, 30, 70, 95],
+                            borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 8, fill: true, tension: 0.4, pointRadius: 12, pointBackgroundColor: '#10b981', pointHoverRadius: 16
+                        }]
+                    },
+                    options: {
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        scales: { 
+                            y: { min: 0, max: 100, grid: { color: '#1e293b' }, ticks: {font: {size: 18}} }, 
+                            x: { grid: { display: false }, ticks: {font: {size: 18, weight: 'bold'}} } 
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>

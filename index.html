@@ -34,11 +34,27 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
         
+        /* Responsive Scaling Magic - dynamically scales ALL Tailwind rem values */
+        html { font-size: 16px; }
+        @media (max-width: 1536px) { html { font-size: 14px; } }
+        @media (max-width: 1280px) { html { font-size: 12px; } }
+        @media (max-width: 1024px) { html { font-size: 10px; } }
+        @media (max-height: 900px) and (min-width: 1024px) { html { font-size: 14px; } }
+        @media (max-height: 800px) and (min-width: 1024px) { html { font-size: 12px; } }
+        @media (max-height: 700px) and (min-width: 1024px) { html { font-size: 10px; } }
+
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; overflow: hidden; }
 
         /* Slide Management */
-        .slide { display: none; height: 100%; width: 100%; overflow-y: auto; scroll-behavior: smooth; padding: 3rem 4rem; }
+        .slide { display: none; height: 100%; width: 100%; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; padding: max(1.5rem, 3vh) max(1.5rem, 4vw); }
         .slide.active { display: flex; flex-direction: column; animation: slideUp 0.5s ease-out; }
+        
+        /* Overrides to prevent vertical squishing & distortion */
+        .slide > div.h-full { height: auto !important; min-height: 100%; }
+        .slide * { min-width: 0; }
+        [class*="min-h-[400px]"] { min-height: 25rem !important; }
+        [class*="min-h-[350px]"] { min-height: 22rem !important; }
+        [class*="min-h-[250px]"] { min-height: 16rem !important; }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 12px; height: 12px; }
@@ -70,7 +86,7 @@
         .mind-node.active { transform: scale(1.05); border-color: white; box-shadow: 0 0 30px rgba(255,255,255,0.2); }
 
         /* Massive Horizontal Accordion */
-        .h-accordion { display: flex; width: 100%; height: 100%; min-height: 600px; gap: 1.5rem; }
+        .h-accordion { display: flex; width: 100%; height: 100%; min-height: 40rem; gap: 1.5rem; }
         .h-accordion-item { flex: 1; border-radius: 2rem; transition: flex 0.7s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; overflow: hidden; position: relative; border: 2px solid rgba(255,255,255,0.1); }
         .h-accordion-item.active { flex: 7; cursor: default; border-color: rgba(255,255,255,0.3); }
         .h-accordion-title { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap; transition: all 0.6s; font-weight: 900; font-size: 1.5rem; letter-spacing: 0.1em; }
@@ -79,7 +95,7 @@
         .h-accordion-item.active .h-accordion-content { opacity: 1; transition-delay: 0.3s; display: block;}
 
         /* Flip Cards */
-        .flip-card { perspective: 2500px; cursor: pointer; height: 100%; min-height: 500px; }
+        .flip-card { perspective: 2500px; cursor: pointer; height: 100%; min-height: 32rem; }
         .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
         .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
         .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 2rem; display: flex; flex-direction: column; padding: 4rem; border: 2px solid #334155; }
@@ -90,8 +106,8 @@
 <body class="flex h-screen w-full bg-slate-950 overflow-hidden text-slate-200 selection:bg-brand-500 selection:text-white">
 
     <!-- Sidebar Navigation -->
-    <nav id="sidebar" class="w-[320px] transition-[width] duration-300 ease-in-out bg-slate-900 border-r border-slate-800 flex flex-col h-full shrink-0 z-30 shadow-2xl relative overflow-hidden">
-        <div class="w-[320px] flex flex-col h-full shrink-0">
+    <nav id="sidebar" class="w-[20rem] transition-[width] duration-300 ease-in-out bg-slate-900 border-r border-slate-800 flex flex-col h-full shrink-0 z-30 shadow-2xl relative overflow-hidden">
+        <div class="w-[20rem] flex flex-col h-full shrink-0">
             <div class="p-6 border-b border-slate-800 bg-slate-950 flex justify-between items-start">
                 <div>
                     <h1 class="text-2xl font-black text-white leading-tight mb-1 tracking-tight">Beyond the Textbook</h1>
@@ -1367,7 +1383,7 @@
             const sidebar = document.getElementById('sidebar');
             const menuBtn = document.getElementById('menu-btn');
             if (isSidebarOpen) {
-                sidebar.style.width = '320px';
+                sidebar.style.width = '20rem';
                 menuBtn.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
                 menuBtn.classList.add('opacity-0', 'pointer-events-none', 'scale-90');
             } else {

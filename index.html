@@ -43,6 +43,28 @@
         @media (max-height: 800px) and (min-width: 1024px) { html { font-size: 12px; } }
         @media (max-height: 700px) and (min-width: 1024px) { html { font-size: 10px; } }
 
+        /* Dynamic Presentation Text Scaling for Large Displays (Projectors) */
+        @media (min-width: 1024px) and (min-height: 700px) {
+            .slide .text-sm { font-size: clamp(0.875rem, 1.2vh + 0.2vw, 1.5rem) !important; line-height: 1.6 !important; }
+            .slide .text-base { font-size: clamp(1rem, 1.5vh + 0.3vw, 1.75rem) !important; line-height: 1.6 !important; }
+            .slide .text-lg { font-size: clamp(1.125rem, 1.8vh + 0.4vw, 2rem) !important; line-height: 1.6 !important; }
+            .slide .text-xl { font-size: clamp(1.25rem, 2.2vh + 0.5vw, 2.5rem) !important; line-height: 1.6 !important; }
+            .slide .text-2xl { font-size: clamp(1.5rem, 2.8vh + 0.6vw, 3rem) !important; line-height: 1.5 !important; }
+            .slide .text-3xl { font-size: clamp(1.875rem, 3.5vh + 0.8vw, 4rem) !important; line-height: 1.4 !important; }
+            .slide .text-4xl { font-size: clamp(2.25rem, 4vh + 1vw, 4.5rem) !important; line-height: 1.2 !important; }
+            .slide .text-5xl { font-size: clamp(3rem, 5vh + 1vw, 5.5rem) !important; line-height: 1.1 !important; }
+            .slide .text-6xl { font-size: clamp(3.75rem, 6vh + 1.2vw, 6.5rem) !important; line-height: 1.1 !important; }
+            
+            /* Add breathing room vertically for text containers */
+            .slide .space-y-6 > * + * { margin-top: clamp(1.5rem, 3vh, 3rem) !important; }
+            .slide .space-y-8 > * + * { margin-top: clamp(2rem, 4vh, 4rem) !important; }
+            .slide .mb-4 { margin-bottom: clamp(1rem, 2vh, 2rem) !important; }
+            .slide .mb-6 { margin-bottom: clamp(1.5rem, 3vh, 3rem) !important; }
+            .slide .mb-8 { margin-bottom: clamp(2rem, 4vh, 4rem) !important; }
+            .slide .p-8 { padding: clamp(2rem, 4vh + 1vw, 4rem) !important; }
+            .slide .p-12 { padding: clamp(3rem, 6vh + 1.5vw, 6rem) !important; }
+        }
+
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; overflow: hidden; }
 
         /* Slide Management */
@@ -244,18 +266,18 @@
                         <h2 class="text-6xl font-black text-white mb-6">The Instructional Shift</h2>
                         <div class="bg-slate-900/60 p-8 rounded-3xl border border-slate-700/50 shadow-lg">
                             <p class="text-3xl text-slate-300 leading-relaxed font-light">
-                                Alberta's new curriculum currently lacks formally approved learning resources. This gap is an unprecedented opportunity: <strong class="text-white font-bold">educational systems must transition from passive consumers to active architects of their curriculum.</strong>
+                                Alberta's new curriculum currently lacks formally approved learning resources. <strong class="text-white font-bold">Educational systems must transition from passive consumers to active architects of their curriculum.</strong>
                             </p>
                         </div>
                     </header>
                     
                     <div class="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-8 items-stretch min-h-0 mb-8">
-                        <div class="glass-panel p-10 rounded-[2rem] border-t-[10px] border-slate-600 bg-slate-900/50 flex flex-col justify-center items-center text-center shadow-lg transition-transform hover:-translate-y-2">
-                            <div class="w-32 h-32 rounded-full bg-slate-800 flex items-center justify-center mb-8 border-4 border-slate-700 shadow-inner shrink-0">
-                                <i class="fas fa-hourglass-half text-6xl text-slate-500"></i>
+                        <div class="glass-panel p-10 rounded-[2rem] border-t-[10px] border-slate-600 bg-slate-900/50 flex flex-col items-center text-center shadow-lg transition-transform hover:-translate-y-2">
+                            <div class="w-24 h-24 rounded-full bg-slate-800 flex items-center justify-center mb-6 border-4 border-slate-700 shadow-inner shrink-0">
+                                <i class="fas fa-hourglass-half text-4xl text-slate-500"></i>
                             </div>
-                            <h3 class="text-4xl font-black text-slate-300 mb-6">Passive Consumption</h3>
-                            <p class="text-2xl text-slate-400 leading-relaxed">Waiting on the sidelines for static, pre-packaged textbook resources to arrive.</p>
+                            <h3 class="text-3xl font-black text-slate-300 mb-4">Passive Consumption</h3>
+                            <p class="text-xl text-slate-400 leading-relaxed">Waiting on the sidelines for static, pre-packaged textbook resources to arrive from traditional publishers.</p>
                         </div>
 
                         <div class="flex justify-center items-center px-2">
@@ -263,12 +285,12 @@
                             <i class="fas fa-chevron-down text-7xl text-brand-500/30 lg:hidden"></i>
                         </div>
 
-                        <div class="glass-panel p-10 rounded-[2rem] border-t-[10px] border-brand-500 bg-brand-900/10 flex flex-col justify-center items-center text-center shadow-[0_0_50px_rgba(14,165,233,0.15)] transition-transform hover:-translate-y-2">
-                            <div class="w-32 h-32 rounded-full bg-brand-900/50 flex items-center justify-center mb-8 border-4 border-brand-500 shadow-[0_0_30px_rgba(14,165,233,0.4)] shrink-0">
-                                <i class="fas fa-drafting-compass text-6xl text-brand-400"></i>
+                        <div class="glass-panel p-10 rounded-[2rem] border-t-[10px] border-brand-500 bg-brand-900/10 flex flex-col items-center text-center shadow-[0_0_50px_rgba(14,165,233,0.15)] transition-transform hover:-translate-y-2">
+                            <div class="w-24 h-24 rounded-full bg-brand-900/50 flex items-center justify-center mb-6 border-4 border-brand-500 shadow-[0_0_30px_rgba(14,165,233,0.4)] shrink-0">
+                                <i class="fas fa-drafting-compass text-4xl text-brand-400"></i>
                             </div>
-                            <h3 class="text-4xl font-black text-white mb-6">Active Architecture</h3>
-                            <p class="text-2xl text-brand-200 leading-relaxed">Leveraging AI to co-design dynamic, localized materials tailored exactly to your students.</p>
+                            <h3 class="text-3xl font-black text-white mb-4">Active Architecture</h3>
+                            <p class="text-xl text-brand-200 leading-relaxed">Leveraging Gen AI to co-design dynamic, localized materials tailored exactly to individual student needs and local context.</p>
                         </div>
                     </div>
                     

@@ -90,22 +90,29 @@
 <body class="flex h-screen w-full bg-slate-950 overflow-hidden text-slate-200 selection:bg-brand-500 selection:text-white">
 
     <!-- Sidebar Navigation -->
-    <nav class="w-[420px] bg-slate-900 border-r border-slate-800 flex flex-col h-full shrink-0 z-20 shadow-2xl relative">
-        <div class="p-8 border-b border-slate-800 bg-slate-950">
-            <h1 class="text-3xl font-black text-white leading-tight mb-2 tracking-tight">Beyond the Textbook</h1>
-            <p class="text-lg text-brand-400 font-bold tracking-widest uppercase">Slide Deck</p>
-        </div>
-        
-        <div class="flex-1 overflow-y-auto py-6 scroll-smooth">
-            <ul class="space-y-1 px-4" id="nav-list">
-                <!-- Dynamically populated by JS to match H2/H3 structure -->
-            </ul>
-        </div>
+    <nav id="sidebar" class="w-[320px] transition-[width] duration-300 ease-in-out bg-slate-900 border-r border-slate-800 flex flex-col h-full shrink-0 z-30 shadow-2xl relative overflow-hidden">
+        <div class="w-[320px] flex flex-col h-full shrink-0">
+            <div class="p-6 border-b border-slate-800 bg-slate-950 flex justify-between items-start">
+                <div>
+                    <h1 class="text-2xl font-black text-white leading-tight mb-1 tracking-tight">Beyond the Textbook</h1>
+                    <p class="text-sm text-brand-400 font-bold tracking-widest uppercase">Slide Deck</p>
+                </div>
+                <button onclick="toggleSidebar()" class="text-slate-500 hover:text-white transition mt-1" title="Collapse Sidebar">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto py-4 scroll-smooth">
+                <ul class="space-y-1 px-3" id="nav-list">
+                    <!-- Dynamically populated by JS to match H2/H3 structure -->
+                </ul>
+            </div>
 
-        <div class="p-8 border-t border-slate-800 bg-slate-950">
-            <div class="flex justify-between items-center text-slate-500 text-sm font-bold">
-                <span><i class="fas fa-keyboard mr-2"></i> Use Arrow Keys</span>
-                <span>Slide <span id="nav-counter">1/31</span></span>
+            <div class="p-6 border-t border-slate-800 bg-slate-950">
+                <div class="flex justify-between items-center text-slate-500 text-xs font-bold">
+                    <span><i class="fas fa-keyboard mr-1"></i> Arrow Keys</span>
+                    <span>Slide <span id="nav-counter">1/31</span></span>
+                </div>
             </div>
         </div>
     </nav>
@@ -113,6 +120,11 @@
     <!-- Main Content Area -->
     <main class="flex-1 flex flex-col h-full relative bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiLz48L3N2Zz4=')]">
         
+        <!-- Floating Hamburger Menu Button -->
+        <button id="menu-btn" onclick="toggleSidebar()" class="absolute top-6 left-6 z-40 bg-slate-800/90 backdrop-blur text-white w-12 h-12 rounded-full border border-slate-700 shadow-[0_0_20px_rgba(0,0,0,0.5)] hover:bg-slate-700 hover:text-brand-400 transition-all duration-300 opacity-0 pointer-events-none scale-90 flex items-center justify-center">
+            <i class="fas fa-bars text-xl"></i>
+        </button>
+
         <div id="slide-container" class="flex-1 overflow-hidden relative">
             
             <!-- Slide 1 -->
@@ -1347,6 +1359,23 @@
                 goToSlide(currentSlide - 1, true); // True indicates we are traveling backwards
             }
         });
+
+        // --- Sidebar Toggle Logic ---
+        let isSidebarOpen = true;
+        function toggleSidebar() {
+            isSidebarOpen = !isSidebarOpen;
+            const sidebar = document.getElementById('sidebar');
+            const menuBtn = document.getElementById('menu-btn');
+            if (isSidebarOpen) {
+                sidebar.style.width = '320px';
+                menuBtn.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+                menuBtn.classList.add('opacity-0', 'pointer-events-none', 'scale-90');
+            } else {
+                sidebar.style.width = '0px';
+                menuBtn.classList.remove('opacity-0', 'pointer-events-none', 'scale-90');
+                menuBtn.classList.add('opacity-100', 'pointer-events-auto', 'scale-100');
+            }
+        }
 
         // --- Interactive Functions ---
         const paradigmData = {

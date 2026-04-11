@@ -34,8 +34,8 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
         
-        /* Responsive Scaling Magic - dynamically scales ALL Tailwind rem values */
-        html { font-size: clamp(16px, 1.1vw + 0.5vh, 32px); } /* Auto-scales up for large projector screens to eliminate empty space */
+        /* Safe Root Scaling */
+        html { font-size: 16px; }
         @media (max-width: 1536px) { html { font-size: 14px; } }
         @media (max-width: 1280px) { html { font-size: 12px; } }
         @media (max-width: 1024px) { html { font-size: 10px; } }
@@ -43,26 +43,15 @@
         @media (max-height: 800px) and (min-width: 1024px) { html { font-size: 12px; } }
         @media (max-height: 700px) and (min-width: 1024px) { html { font-size: 10px; } }
 
-        /* Dynamic Presentation Text Scaling for Large Displays (Projectors) */
+        /* Fluid Typography - Only scales fonts, protects container structures */
         @media (min-width: 1024px) and (min-height: 700px) {
-            .slide .text-sm { font-size: clamp(0.875rem, 1.2vh + 0.2vw, 1.5rem) !important; line-height: 1.6 !important; }
-            .slide .text-base { font-size: clamp(1rem, 1.5vh + 0.3vw, 1.75rem) !important; line-height: 1.6 !important; }
-            .slide .text-lg { font-size: clamp(1.125rem, 1.8vh + 0.4vw, 2rem) !important; line-height: 1.6 !important; }
-            .slide .text-xl { font-size: clamp(1.25rem, 2.2vh + 0.5vw, 2.5rem) !important; line-height: 1.6 !important; }
-            .slide .text-2xl { font-size: clamp(1.5rem, 2.8vh + 0.6vw, 3rem) !important; line-height: 1.5 !important; }
-            .slide .text-3xl { font-size: clamp(1.875rem, 3.5vh + 0.8vw, 4rem) !important; line-height: 1.4 !important; }
-            .slide .text-4xl { font-size: clamp(2.25rem, 4vh + 1vw, 4.5rem) !important; line-height: 1.2 !important; }
-            .slide .text-5xl { font-size: clamp(3rem, 5vh + 1vw, 5.5rem) !important; line-height: 1.1 !important; }
-            .slide .text-6xl { font-size: clamp(3.75rem, 6vh + 1.2vw, 6.5rem) !important; line-height: 1.1 !important; }
-            
-            /* Add breathing room vertically for text containers */
-            .slide .space-y-6 > * + * { margin-top: clamp(1.5rem, 3vh, 3rem) !important; }
-            .slide .space-y-8 > * + * { margin-top: clamp(2rem, 4vh, 4rem) !important; }
-            .slide .mb-4 { margin-bottom: clamp(1rem, 2vh, 2rem) !important; }
-            .slide .mb-6 { margin-bottom: clamp(1.5rem, 3vh, 3rem) !important; }
-            .slide .mb-8 { margin-bottom: clamp(2rem, 4vh, 4rem) !important; }
-            .slide .p-8 { padding: clamp(2rem, 4vh + 1vw, 4rem) !important; }
-            .slide .p-12 { padding: clamp(3rem, 6vh + 1.5vw, 6rem) !important; }
+            .slide .text-lg { font-size: clamp(1.125rem, 1.2vh + 0.4vw, 1.5rem); }
+            .slide .text-xl { font-size: clamp(1.25rem, 1.5vh + 0.5vw, 1.75rem); }
+            .slide .text-2xl { font-size: clamp(1.5rem, 2vh + 0.6vw, 2.25rem); }
+            .slide .text-3xl { font-size: clamp(1.875rem, 2.5vh + 0.8vw, 2.75rem); }
+            .slide .text-4xl { font-size: clamp(2.25rem, 3vh + 1vw, 3.25rem); }
+            .slide .text-5xl { font-size: clamp(3rem, 4vh + 1.2vw, 4.25rem); }
+            .slide .text-6xl { font-size: clamp(3.75rem, 5vh + 1.5vw, 5rem); }
         }
 
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; overflow: hidden; }
@@ -71,8 +60,7 @@
         .slide { display: none; height: 100%; width: 100%; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; padding: max(1.5rem, 3vh) max(1.5rem, 4vw); }
         .slide.active { display: flex; flex-direction: column; animation: slideUp 0.5s ease-out; }
         
-        /* Overrides to prevent vertical squishing & distortion */
-        .slide > div.h-full { height: auto !important; min-height: 100%; }
+        /* Overrides to prevent vertical squishing */
         .slide * { min-width: 0; }
         [class*="min-h-[400px]"] { min-height: 25rem !important; }
         [class*="min-h-[350px]"] { min-height: 22rem !important; }
@@ -266,7 +254,7 @@
                         <h2 class="text-6xl font-black text-white mb-6">The Instructional Shift</h2>
                         <div class="bg-slate-900/60 p-8 rounded-3xl border border-slate-700/50 shadow-lg">
                             <p class="text-3xl text-slate-300 leading-relaxed font-light">
-                                Alberta's new curriculum currently lacks formally approved learning resources. <strong class="text-white font-bold">Educational systems must transition from passive consumers to active architects of their curriculum.</strong>
+                                Alberta's new curriculum currently lacks formally approved learning resources. This gap offers an unprecedented opportunity: leverage Generative AI to design dynamic, localized materials instead of waiting for textbooks. <strong class="text-white font-bold">Educational systems must transition from passive consumers to active architects of their curriculum.</strong>
                             </p>
                         </div>
                     </header>
@@ -1564,12 +1552,12 @@
                         </div>
                         <div class="relative w-full flex-1 rounded-xl overflow-hidden border border-slate-600 bg-slate-800 select-none min-h-[200px]">
                             <div class="absolute inset-0 p-8 flex flex-col justify-center bg-red-900/20 border-l-[6px] border-red-500/50">
-                                <h5 class="text-red-400 text-sm font-bold uppercase tracking-widest mb-2">Enacted (AI Illusion)</h5>
-                                <p class="text-slate-300 text-xl pr-12">${data.enacted}</p>
+                                <h5 class="text-red-400 text-base font-bold uppercase tracking-widest mb-2">Enacted (AI Illusion)</h5>
+                                <p class="text-slate-300 text-2xl pr-12">${data.enacted}</p>
                             </div>
                             <div class="absolute inset-0 p-8 flex flex-col justify-center bg-slate-800 border-l-[6px] border-${data.theme}-500" id="top-layer-tab" style="clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);">
-                                <h5 class="text-${data.theme}-400 text-sm font-bold uppercase tracking-widest mb-2">Intended Curriculum</h5>
-                                <p class="text-slate-200 text-xl pr-12">${data.intended}</p>
+                                <h5 class="text-${data.theme}-400 text-base font-bold uppercase tracking-widest mb-2">Intended Curriculum</h5>
+                                <p class="text-slate-200 text-2xl pr-12">${data.intended}</p>
                             </div>
                             <div class="absolute top-0 bottom-0 w-1 bg-${data.theme}-400 z-10 pointer-events-none transform -translate-x-1/2 shadow-[0_0_15px_currentColor]" id="divider-tab" style="left: 100%;">
                                 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-slate-900 border-2 border-${data.theme}-400 rounded-full flex items-center justify-center text-white shadow-lg">
@@ -1580,7 +1568,7 @@
                         </div>
                     </div>
                     <div class="p-8 bg-amber-900/30 border-t border-amber-500/50 shrink-0">
-                        <p class="text-amber-100 text-lg leading-relaxed"><strong class="text-amber-400">The Gap:</strong> ${data.gap}</p>
+                        <p class="text-amber-100 text-xl leading-relaxed"><strong class="text-amber-400">The Gap:</strong> ${data.gap}</p>
                     </div>
                 `;
             }
@@ -1647,18 +1635,18 @@
             const data = dokData[type];
             display.innerHTML = `
                 <h3 class="text-4xl font-black text-white mb-6 shrink-0">${data.title}</h3>
-                <div class="space-y-6 overflow-y-auto pr-4 flex-1">
+                <div class="space-y-6 overflow-y-auto pr-4 flex-1 flex flex-col justify-center">
                     <div>
-                        <h5 class="text-sm text-${data.color}-400 font-bold uppercase tracking-widest mb-2"><i class="fas fa-bullseye mr-2"></i>Focus</h5>
-                        <p class="text-lg text-slate-300 leading-relaxed">${data.focus}</p>
+                        <h5 class="text-base text-${data.color}-400 font-bold uppercase tracking-widest mb-2"><i class="fas fa-bullseye mr-2"></i>Focus</h5>
+                        <p class="text-2xl text-slate-300 leading-relaxed">${data.focus}</p>
                     </div>
                     <div>
-                        <h5 class="text-sm text-${data.color}-400 font-bold uppercase tracking-widest mb-2"><i class="fas fa-brain mr-2"></i>Cognitive Demand</h5>
-                        <p class="text-lg text-slate-300 leading-relaxed">${data.demand}</p>
+                        <h5 class="text-base text-${data.color}-400 font-bold uppercase tracking-widest mb-2"><i class="fas fa-brain mr-2"></i>Cognitive Demand</h5>
+                        <p class="text-2xl text-slate-300 leading-relaxed">${data.demand}</p>
                     </div>
                     <div class="bg-${data.color}-900/20 border-l-[4px] border-${data.color}-500 p-5 rounded-r-xl">
-                        <h5 class="text-xs text-${data.color}-300 font-bold uppercase tracking-widest mb-2">Examples</h5>
-                        <p class="text-base text-white leading-relaxed">${data.examples}</p>
+                        <h5 class="text-sm text-${data.color}-300 font-bold uppercase tracking-widest mb-2">Examples</h5>
+                        <p class="text-xl text-white leading-relaxed">${data.examples}</p>
                     </div>
                 </div>
             `;
@@ -1741,7 +1729,7 @@
                 display.className = `glass-panel h-full rounded-[2.5rem] p-12 border-t-[12px] border-${data.color}-500 flex flex-col justify-center shadow-2xl bg-slate-900/95 transition-all duration-300 min-h-0`;
                 display.innerHTML = `
                     <h4 class="text-3xl font-black text-white mb-6 shrink-0 flex items-center"><i class="fas ${data.icon} text-${data.color}-400 mr-4 text-4xl"></i> ${data.title}</h4>
-                    <div class="text-xl text-slate-300 leading-relaxed">${data.text}</div>
+                    <div class="text-2xl text-slate-300 leading-relaxed flex-1 flex flex-col justify-center">${data.text}</div>
                 `;
             }
         }
@@ -1816,7 +1804,7 @@
                 display.innerHTML = `
                     <h4 class="text-3xl font-black text-white mb-2 shrink-0 flex items-center"><i class="fas ${data.icon} text-${data.color}-400 mr-4 text-4xl"></i> ${data.title}</h4>
                     <h5 class="text-xl font-bold text-${data.color}-300 mb-8 tracking-wide">${data.subtitle}</h5>
-                    <div class="text-xl text-slate-300 leading-relaxed">${data.text}</div>
+                    <div class="text-2xl text-slate-300 leading-relaxed flex-1 flex flex-col justify-center">${data.text}</div>
                 `;
             }
         }
@@ -1885,7 +1873,7 @@
                 display.innerHTML = `
                     <h4 class="text-3xl font-black text-white mb-2 shrink-0 flex items-center"><i class="fas ${data.icon} text-${data.color}-400 mr-4 text-4xl"></i> ${data.title}</h4>
                     <h5 class="text-xl font-bold text-${data.color}-300 mb-8 tracking-wide">${data.subtitle}</h5>
-                    <div class="text-xl text-slate-300 leading-relaxed">${data.text}</div>
+                    <div class="text-2xl text-slate-300 leading-relaxed flex-1 flex flex-col justify-center">${data.text}</div>
                 `;
             }
         }
@@ -1942,7 +1930,7 @@
                 display.innerHTML = `
                     <h4 class="text-3xl font-black text-white mb-2 shrink-0 flex items-center"><i class="fas ${data.icon} text-${data.color}-400 mr-4 text-4xl"></i> ${data.title}</h4>
                     <h5 class="text-xl font-bold text-${data.color}-300 mb-8 tracking-wide">${data.subtitle}</h5>
-                    <div class="text-xl text-slate-300 leading-relaxed">${data.text}</div>
+                    <div class="text-2xl text-slate-300 leading-relaxed flex-1 flex flex-col justify-center">${data.text}</div>
                 `;
             }
         }
